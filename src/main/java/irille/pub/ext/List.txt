@@ -1,0 +1,186 @@
+Ext.define('mvc.view.【包名】.【类名】.List',{
+	extend : 'Ext.grid.Panel',
+	oldId : 'btn_【类名】',
+	lock : true,
+	disableSelection : false,
+	loadMask : true,
+	multiSelect : true,
+	roles : '',
+	selModel : {selType : 'checkboxmodel'},
+	initComponent : function(){
+		【明细行功能定义】
+		【主界面功能定义】
+		this.columns = [ 
+			【单元格定义】
+		];
+		this.tbar=mainActs;
+		this.store=Ext.create('mvc.store.【包名】.【类名】');
+		this.store.remoteFilter = true;
+		this.store.proxy.filterParam = 'filter';
+		this.dockedItems=[{
+			dock : 'top', 
+			xtype : 'toolbar',
+			items : [【搜索栏定义】{
+				xtype : 'button',
+				text : '撤销',
+				scope : this,
+				iconCls : 'win-close-icon',
+				handler : this.onSearchCancel
+			},{
+				xtype : 'button',
+				text : '搜索',
+				scope : this,
+				iconCls : 'win-ok-icon',
+				handler : this.onSearch
+			}]
+		},{
+			xtype : 'pagingtoolbar',
+			store : this.store,
+			dock : 'bottom',
+			displayInfo : true,
+			displayMsg : '显示 {0} - {1} 条，共计 {2} 条',
+			emptyMsg : '没有数据',
+			items : [{xtype : Ext.create('mvc.tools.ComboxPaging',{myList : this})}]
+		}];
+		this.callParent(arguments);
+	},
+	listeners : {
+		selectionchange : function(selModel, selected) {
+			【行选择事件】
+		}
+	},
+	【编辑-头】onEdit : function(){
+		var selection = this.getView().getSelectionModel().getSelection()[0];
+		if (selection){
+			var win = Ext.create('mvc.view.【包名】.【类名】.WinEdit',{
+				title : this.title+'['+selection.get('bean.name')+']>编辑',
+				record : selection
+			});
+			win.show();
+			win.loadData();
+		}
+	},【编辑-尾】
+	【新增-头】onSaveRecord : function(form, data){
+		this.store.insert(0,data);
+		this.getView().select(0);
+		Ext.example.msg(msg_title, msg_text);
+	},
+	onIns : function(){
+		var win = Ext.create('mvc.view.【包名】.【类名】.Win',{
+			title : this.title+'>新增'
+		});
+		win.on('create',this.onSaveRecord,this);
+		win.show();
+	},【新增-尾】
+	【修改-头】onUpdateRecord : function(form, data){
+		var selection = this.getView().getSelectionModel().getSelection()[0];
+		var bean = Ext.create('mvc.model.【包名】.【类名】', data);
+		Ext.apply(selection.data,bean.data);
+		selection.commit();
+		this.getView().select(selection);
+		Ext.example.msg(msg_title, msg_text);
+	},
+	onUpd : function(){
+		var selection = this.getView().getSelectionModel().getSelection()[0];
+		this.onUpdWin(selection);
+	},
+	onUpdRow : function(grid, rowIndex){
+		var selection = this.getStore().getAt(rowIndex);
+		this.getView().deselect(this.getView().getSelectionModel().getSelection());
+		this.getView().select(selection);
+		this.onUpdWin(selection);
+	},
+	onUpdWin : function(selection){
+		if (selection){
+			mvc.model.【包名】.【类名】.load(selection.get('bean.pkey'), {
+				scope : this,
+				failure : function(response, operation) {
+					Ext.example.msg(msg_title,msg_ajax);
+				},
+				success : function(response, operation) {
+					Ext.apply(selection.data,response.data);
+					var win = Ext.create('mvc.view.【包名】.【类名】.Win',{
+						title : this.title+'>修改',
+						insFlag : false
+					});
+					win.on('create',this.onUpdateRecord,this);
+					win.show();
+					win.setActiveRecord(selection);
+				}
+			});
+		}
+	},【修改-尾】
+	【删除-头】onDel : function(){
+		var selection = this.getView().getSelectionModel().getSelection();
+		if (selection){
+			var me = this;
+			Ext.MessageBox.confirm(msg_confirm_title, msg_confirm_msg, 
+				function(btn) {
+					if (btn != 'yes')
+						return;
+					var arr=new Array();
+					for(var i = 0; i < selection.length; i++){
+						arr.push(selection[i].get('bean.pkey'));
+					}
+					Ext.Ajax.request({
+						url : base_path+'/【包名】_【类名】_delMulti',
+						params : { pkeys : arr.toString() },
+						success : function (response, options) {
+							var result = Ext.decode(response.responseText);
+							if (result.success){
+								me.getStore().remove(selection);
+								Ext.example.msg(msg_title, msg_del);
+							}else{
+								Ext.MessageBox.show({
+									title : msg_title, 
+									msg : result.msg,
+									buttons : Ext.MessageBox.OK,
+									icon : Ext.MessageBox.ERROR
+								});
+							}
+						}
+					});
+				}
+			);
+		}
+	},
+	onDelRow : function(grid, rowIndex){
+		var me = this;
+		Ext.MessageBox.confirm(msg_confirm_title, msg_confirm_msg,
+			function(btn) {
+				if (btn != 'yes')
+					return;
+				Ext.Ajax.request({
+					url : base_path+'/【包名】_【类名】_del?pkey='+me.getStore().getAt(rowIndex).get('bean.pkey'),
+					success : function (response, options) {
+						var result = Ext.decode(response.responseText);
+						if (result.success){
+							me.getStore().removeAt(rowIndex);
+							Ext.example.msg(msg_title, msg_del);
+						}else{
+							Ext.MessageBox.show({ 
+								title : msg_title,
+								msg : result.msg,
+								buttons : Ext.MessageBox.OK,
+								icon : Ext.MessageBox.ERROR
+							});
+						}
+					}
+				});
+			}
+		);
+	},【删除-尾】
+	onSearchCancel : function(){
+		mvc.Tools.searchClear(this.down('toolbar'));
+		this.store.clearFilter();
+	},
+	onSearch : function(){
+		var array = mvc.Tools.searchValues(this.down('toolbar'));
+		if (array.length == 0){
+			this.store.clearFilter();
+			return;
+		}
+		this.store.clearFilter(true);
+		this.store.filter(array);
+	}
+});

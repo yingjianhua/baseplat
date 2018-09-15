@@ -1,0 +1,87 @@
+Ext.define('mvc.view.【包名】.【类名】.ListMain',{
+	extend : 'Ext.grid.Panel',
+	disableSelection : false,
+	loadMask : true,
+	multiSelect : true,
+	roles : '',
+	selModel : {selType : 'checkboxmodel'},
+	initComponent : function(){
+		【明细行功能定义】
+		this.columns = [ 
+			【单元格定义】
+			];
+		this.store=Ext.create('mvc.store.【包名】.【类名】');
+		this.store.remoteFilter = true;
+		this.store.proxy.filterParam = 'filter';
+		this.dockedItems=[{
+			xtype : 'pagingtoolbar',
+			store : this.store,
+			dock : 'bottom',
+			displayInfo : true,
+			displayMsg : '显示 {0} - {1} 条，共计 {2} 条',
+			emptyMsg : '没有数据',
+			items : [{xtype : Ext.create('mvc.tools.ComboxPaging',{myList : this})}]
+		}];
+		this.callParent(arguments);
+	},
+	【修改-头】onUpdateRecord : function(form, data){
+		var selection = this.getView().getSelectionModel().getSelection()[0];
+		var bean = Ext.create('mvc.model.【包名】.【类名】', data);
+		Ext.apply(selection.data,bean.data);
+		selection.commit();
+		this.getView().select(selection);
+		Ext.example.msg(msg_title, msg_text);
+	},
+	onUpdRow : function(grid, rowIndex){
+		var selection = this.getStore().getAt(rowIndex);
+		this.getView().deselect(this.getView().getSelectionModel().getSelection());
+		this.getView().select(selection);
+		this.onUpdWin(selection);
+	},
+	onUpdWin : function(selection){
+		if (selection){
+			mvc.model.【包名】.【类名】.load(selection.get('bean.pkey'), {
+				scope : this,
+				failure : function(response, operation) {
+					Ext.example.msg(msg_title,msg_ajax);
+				},
+				success : function(response, operation) {
+					Ext.apply(selection.data,response.data);
+					var win = Ext.create('mvc.view.【包名】.【类名】.Win',{
+						title : this.title+'>修改',
+						insFlag : false
+					});
+					win.on('create',this.onUpdateRecord,this);
+					win.show();
+					win.setActiveRecord(selection);
+				}
+			});
+		}
+	},【修改-尾】
+	【删除-头】onDelRow : function(grid, rowIndex){
+		var me = this;
+		Ext.MessageBox.confirm(msg_confirm_title, msg_confirm_msg,
+			function(btn) {
+				if (btn != 'yes')
+					return;
+				Ext.Ajax.request({
+					url : '/【包名】_【类名】_del?pkey='+me.getStore().getAt(rowIndex).get('bean.pkey'),
+					success : function (response, options) {
+						var result = Ext.decode(response.responseText);
+						if (result.success){
+							me.getStore().removeAt(rowIndex);
+							Ext.example.msg(msg_title, msg_del);
+						}else{
+							Ext.MessageBox.show({ 
+								title : msg_title,
+								msg : result.msg,
+								buttons : Ext.MessageBox.OK,
+								icon : Ext.MessageBox.ERROR
+							});
+						}
+					}
+				});
+			}
+		);
+	}【删除-尾】
+});

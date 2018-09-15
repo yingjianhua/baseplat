@@ -1,0 +1,7 @@
+Ext.define('mvc.combo.【包名】.【类变量名】', {
+	extend : 'Ext.data.Store',
+	fields : ['value', 'text'],
+	data : [
+		【选项明细】
+	]
+})

@@ -1,0 +1,18 @@
+Ext.define('mvc.store.【包名】.【类名】', {
+	extend : 'Ext.data.Store',
+	requires : 'mvc.model.【包名】.【类名】',
+	model : 'mvc.model.【包名】.【类名】',
+	pageSize : 20,
+	remoteSort : false,
+	autoLoad : false,
+	proxy : {
+		type : 'ajax',
+		url : base_path+'/【包名】_【类名】_list',
+		reader : {
+			type : 'json',
+			root : 'items',
+			totalProperty : 'total'
+		},
+		simpleSortMode : true
+	}
+})

@@ -1,0 +1,27 @@
+Ext.define('mvc.view.【包名】.【类名】.ListLine【从表类名】',{
+	extend : 'Ext.grid.Panel',
+	disableSelection : false,
+	loadMask : true,
+	multiSelect : true,
+	selModel : {selType : 'checkboxmodel'},
+	initComponent : function(){
+		this.columns = [ 
+			【单元格定义】
+		];
+		this.store=Ext.create('mvc.store.【从表包名】.【从表类名】');
+		this.store.remoteFilter = true;
+		this.store.proxy.filterParam = 'filter';
+		this.dockedItems=[{
+			dock : 'top', 
+			xtype : 'toolbar',
+			xtype : 'pagingtoolbar',
+			store : this.store,
+			dock : 'bottom',
+			displayInfo : true,
+			displayMsg : '显示 {0} - {1} 条，共计 {2} 条',
+			emptyMsg : '没有数据',
+			items : [{xtype : Ext.create('mvc.tools.ComboxPaging',{myList : this})}]
+		}];
+		this.callParent(arguments);
+	}
+});

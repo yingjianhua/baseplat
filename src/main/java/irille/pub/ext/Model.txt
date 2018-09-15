@@ -1,0 +1,11 @@
+Ext.define('mvc.model.【包名】.【类名】', {
+	extend : 'Ext.data.Model',
+	idProperty : 'bean.pkey',
+	proxy : {
+		type : 'ajax',
+		url : base_path+'/【包名】_【类名】_load'
+	},
+	fields : [
+		【字段集】
+	]
+});

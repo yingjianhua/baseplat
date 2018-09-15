@@ -1,0 +1,34 @@
+Ext.define('mvc.view.【包名】.【类名】.Form',{
+	extend : 'Ext.form.Panel',
+	requires : ['Ext.ux.DataTip'],
+	layout : 'form',
+	border : false,
+	frame : false,
+	insFlag : true,
+	bodyPadding : '5 5 5 5',
+	url : base_path+'/【包名】_【类名】_',
+	fieldDefaults : {
+		labelWidth : 100,
+		labelStyle : 'font-weight : bold'
+	},
+	plugins : {
+		ptype : 'datatip'
+	},
+	initComponent : function(){
+		if (this.insFlag)
+			this.url = this.url + 'ins';
+		else
+			this.url = this.url + 'upd';
+		var formFlds = [];
+		formFlds.push(【字段集】);
+		this.items = [{
+			layout : {
+				type : 'vbox',
+				align : 'stretch'
+			},
+			border : false,
+			items : formFlds
+		}];
+		this.callParent(arguments);
+	}
+});

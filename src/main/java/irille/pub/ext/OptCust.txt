@@ -1,0 +1,13 @@
+Ext.define('mvc.comboCust.【变量名】', {
+	extend : 'Ext.data.Store',
+	fields : ['value', 'text'],
+	autoLoad : true,
+	proxy : {
+		type : 'ajax',
+		url : base_path+'/sys_SysCtype_getCombo?ctype=【变量名】',
+		reader : {
+			type : 'json',
+			root : 'items'
+		}
+	}
+})
