@@ -46,7 +46,7 @@ public class Tb<THIS extends Tb> extends TbBase<THIS> {
 	public Tb(Class classBean, String tbName, String shortName) {
 		super(classBean, Str.getClazzLastCode(classBean), tbName, shortName);
 		String className = classBean.getName();
-		if(className.indexOf(".domain.")!=-1) {
+		if(className.indexOf(".entity.")!=-1) {
 			String[] strs = className.substring(className.indexOf(".entity.")+".entity.".length()).split("\\.");
 			_codeSqlTb = Str.tranFieldToLineLower(strs[strs.length-2]+strs[strs.length-1].split("$")[0]).substring(0);// 去掉前的"_"
 		} else {
