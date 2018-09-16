@@ -10,5 +10,6 @@ import java.lang.annotation.Target;
 public @interface RequestMapping {
 
 	String alias();
+	String description() default "";
 	int sort() default 99;
 }

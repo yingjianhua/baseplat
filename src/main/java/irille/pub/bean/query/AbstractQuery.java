@@ -147,15 +147,15 @@ public abstract class AbstractQuery {
 	}
 	
 	private static void printSql(String sql, Serializable... params) {
-		Optional<StackTraceElement> o = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("DAO")||st.getClassName().contains("DAO$")).findFirst();
+		Optional<StackTraceElement> o = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Dao")||st.getClassName().contains("Dao$")).findFirst();
 		if(o.isPresent()) {
 			log.debug("sql:"+sql+"|"+params(params)+"] [stackTrace: "+o.get().toString());
 		} else {
 			Optional<StackTraceElement> o2 = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Action")||st.getClassName().contains("Action$")).findFirst();
 			if(o2.isPresent())
-				log.warn("数据库查询没有写在DAO里面,有问题... "+o2.get().toString());
+				log.warn("数据库查询没有写在Dao里面,有问题... "+o2.get().toString());
 			else
-				log.warn("数据库查询没有写在DAO里面,有问题... 未知位置!!!");
+				log.warn("数据库查询没有写在Dao里面,有问题... 未知位置!!!");
 			log.debug("sql:"+sql+"|"+params(params));
 		}
 	}
