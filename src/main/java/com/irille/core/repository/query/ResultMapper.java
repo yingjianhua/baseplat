@@ -1,4 +1,4 @@
-package irille.pub.bean.query;
+package com.irille.core.repository.query;
 
 import irille.pub.Log;
 import irille.pub.bean.Bean;

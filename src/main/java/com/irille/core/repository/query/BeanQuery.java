@@ -1,14 +1,16 @@
-package irille.pub.bean.query;
+package com.irille.core.repository.query;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
+
+import com.irille.core.repository.sql.I18NSQL;
+import com.irille.core.repository.sql.SQL;
 
 import irille.pub.Log;
 import irille.pub.bean.Bean;
 import irille.pub.bean.BeanMain;
-import irille.pub.bean.sql.I18NSQL;
-import irille.pub.bean.sql.SQL;
 import irille.pub.tb.FldLanguage.Language;
 import irille.pub.tb.IEnumFld;
 
@@ -95,6 +97,11 @@ public class BeanQuery<T> extends AbstractQuery {
 	public BeanQuery<T> WHERE(boolean test, IEnumFld fld, String conditions, Serializable... params) {
 		if(test)
 			sql.WHERE(fld, conditions, params);
+		return this;
+	}
+	public BeanQuery<T> WHERE(boolean test, IEnumFld fld, String conditions, Supplier<Serializable> params) {
+		if(test)
+			sql.WHERE(fld, conditions, params.get());
 		return this;
 	}
 	public BeanQuery<T> WHERE(String conditions, Serializable... params) {

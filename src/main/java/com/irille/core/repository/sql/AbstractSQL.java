@@ -1,4 +1,4 @@
-package irille.pub.bean.sql;
+package com.irille.core.repository.sql;
 
 import java.io.IOException;
 import java.io.Serializable;

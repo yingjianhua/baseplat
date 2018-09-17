@@ -1,11 +1,11 @@
-package irille.pub.bean.statistics;
-
-import irille.pub.bean.Query;
+package com.irille.core.repository.statistics;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.irille.core.repository.Query;
 
 public class Table {
 	private List<Map<String,Object>> data;

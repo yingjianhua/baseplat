@@ -1,4 +1,4 @@
-package irille.action;
+package com.irille.core.controller;
 
 import java.io.Serializable;
 

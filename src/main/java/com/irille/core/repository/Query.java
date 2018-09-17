@@ -1,12 +1,14 @@
-package irille.pub.bean;
+package com.irille.core.repository;
 
 import java.io.Serializable;
 import java.util.List;
 
+import com.irille.core.repository.query.BeanQuery;
+import com.irille.core.repository.query.SqlQuery;
+import com.irille.core.repository.sql.SQL;
+
 import irille.pub.Log;
-import irille.pub.bean.query.BeanQuery;
-import irille.pub.bean.query.SqlQuery;
-import irille.pub.bean.sql.SQL;
+import irille.pub.bean.BeanMain;
 import irille.pub.svr.DbPool;
 import irille.pub.tb.FldLanguage.Language;
 import irille.pub.tb.IEnumFld;
@@ -68,5 +70,8 @@ public class Query {
 	public static <T extends BeanMain<?, ?>> T SELECT(Class<T> beanClass, Language lang, Integer pkey) {
 		BeanQuery<?> q = new BeanQuery<>(lang);
 		return q.SELECT(beanClass).FROM(beanClass).WHERE("pkey=?", pkey).query();
+	}
+	public static <T extends BeanMain<?, ?>> BeanQuery<T> DELETE(Class<T> beanClass) {
+		return new BeanQuery<>().DELETE(beanClass);
 	}
 }

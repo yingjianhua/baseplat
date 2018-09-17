@@ -1,4 +1,4 @@
-package irille.pub.bean.statistics;
+package com.irille.core.repository.statistics;
 
 import java.util.function.BiFunction;
 

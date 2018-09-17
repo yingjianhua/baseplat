@@ -1,4 +1,4 @@
-package irille.pub.bean.sql;
+package com.irille.core.repository.sql;
 
 import irille.pub.bean.BeanMain;
 import irille.pub.tb.FldLanguage;

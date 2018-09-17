@@ -1,4 +1,4 @@
-package irille.pub.bean.query;
+package com.irille.core.repository.query;
 
 import java.io.Serializable;
 import java.sql.PreparedStatement;
