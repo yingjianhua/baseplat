@@ -112,6 +112,10 @@ public class BeanQuery<T> extends AbstractQuery {
 		sql.LEFT_JOIN(beanClass, fld1, fld2);
 		return this;
 	}
+	public <T2 extends BeanMain<?, ?>> BeanQuery<T> INNER_JOIN(Class<T2> beanClass, IEnumFld fld1, IEnumFld fld2) {
+		sql.INNER_JOIN(beanClass, fld1, fld2);
+		return this;
+	}
 	public BeanQuery<T> GROUP_BY(IEnumFld fld) {
 		sql.GROUP_BY(fld);
 		return this;

@@ -41,7 +41,6 @@ public class Query {
 	public static SqlQuery sql(SQL sql) {
 		return new SqlQuery(sql.toString(), sql.PARAMS().toArray(new Serializable[sql.PARAMS().size()]));
 	}
-	
 	public static BeanQuery<?> SELECT(IEnumFld... flds) {
 		BeanQuery<?> q = new BeanQuery<>();
 		return q.SELECT(flds);

@@ -20,10 +20,11 @@ public class EnumLine  {
 	private static final Log LOG = new Log(EnumLine.class);
 	private static Hashtable<Class, Vector<EnumLine>>  _lines = new Hashtable();
 
-	private Enum _enum;
-	private byte _key;
-	private String _name;
+	protected Enum _enum;
+	protected byte _key;
+	protected String _name;
 
+	public EnumLine() {}
 	public EnumLine(Enum enumObj,int key, String name) {
 		_enum=enumObj;
 		_key = (byte)key;

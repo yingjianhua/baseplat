@@ -10,9 +10,6 @@ import java.io.FileOutputStream;
 
 import javax.imageio.ImageIO;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-
 public final class ImageSet {
 	public ImageSet() {
 
@@ -58,8 +55,11 @@ public final class ImageSet {
 			//水印文件结束
 			g.dispose();
 			FileOutputStream out = new FileOutputStream(targetImg);
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-			encoder.encode(image);
+			
+			ImageIO.write(image, "jpg", out);
+//			jdk1.7后 JPEGImageEncoder 不再使用
+//			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+//			encoder.encode(image);
 			out.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -104,8 +104,12 @@ public final class ImageSet {
 			g.drawString(pressText, wideth - fontSize - x, height - fontSize / 2 - y);
 			g.dispose();
 			FileOutputStream out = new FileOutputStream(targetImg);
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-			encoder.encode(image);
+			
+			ImageIO.write(image, "jpg", out);
+//			jdk1.7后 JPEGImageEncoder 不再使用
+//			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+//			encoder.encode(image);
+			
 			out.close();
 		} catch (Exception e) {
 			System.out.println(e);

@@ -3,6 +3,7 @@ package com.irille.core.repository.query;
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -11,10 +12,11 @@ import java.util.stream.Stream;
 
 import org.apache.log4j.Logger;
 
+import com.irille.core.repository.db.ConnectionManager;
+
 import irille.pub.Log;
 import irille.pub.bean.Bean;
 import irille.pub.bean.BeanBase;
-import irille.pub.svr.DbPool;
 
 public abstract class AbstractQuery {
 	private static final Log LOG = new Log(AbstractQuery.class);
@@ -101,13 +103,13 @@ public abstract class AbstractQuery {
 //		if(needDebug()) printSql(getSql(), getParams());
 		PreparedStatement stmt = null;
 		try {
-			stmt = DbPool.getInstance().getConn().prepareStatement(getSql());
+			stmt = ConnectionManager.getConnection().prepareStatement(getSql());
 			BeanBase.toPreparedStatementData(stmt, 1, getParams());
 			return stmt.executeUpdate();
 		} catch (Exception e) {
 			throw LOG.err("executeUpdate", "执行【{0}】出错", getSql());
 		} finally {
-			DbPool.close(stmt);
+			close(stmt);
 		}
 	}
 
@@ -116,7 +118,7 @@ public abstract class AbstractQuery {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			stmt = DbPool.getInstance().getConn().prepareStatement(sql);
+			stmt = ConnectionManager.getConnection().prepareStatement(sql);
 			stmt.setFetchSize(BeanBase.FETCH_SIZE);
 			BeanBase.toPreparedStatementData(stmt, 1, params);
 			rs = stmt.executeQuery();
@@ -124,7 +126,7 @@ public abstract class AbstractQuery {
 		} catch (Exception e) {
 			throw LOG.err(e, "queryCountRecord", "取数据库记录时出错【{0}】!", sql);
 		} finally {
-			DbPool.close(stmt, rs);
+			close(stmt, rs);
 		}
 	}
 	
@@ -134,7 +136,7 @@ public abstract class AbstractQuery {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			stmt = DbPool.getInstance().getConn().prepareStatement(getSql());
+			stmt = ConnectionManager.getConnection().prepareStatement(getSql());
 			stmt.setFetchSize(BeanBase.FETCH_SIZE);
 			BeanBase.toPreparedStatementData(stmt, 1, getParams());
 			rs = stmt.executeQuery();
@@ -142,10 +144,30 @@ public abstract class AbstractQuery {
 		} catch (Exception e) {
 			throw LOG.err(e, "queryRecord", "取数据库记录时出错【{0}】!", getSql());
 		} finally {
-			DbPool.close(stmt, rs);
+			close(stmt, rs);
 		}
 	}
-	
+
+	private static final void close(Statement stmt, ResultSet rs) {
+		close(rs);
+		close(stmt);
+	}
+	private static final void close(Statement stmt) {
+		try {
+			if (stmt != null)
+				stmt.close();
+		} catch (Exception e) {
+			throw LOG.err(e, "closeStmt", "关闭对象【Statement】出错");
+		}
+	}
+	private static final void close(ResultSet rs) {
+		try {
+			if (rs != null)
+				rs.close();
+		} catch (Exception e) {
+			throw LOG.err(e, "closeResultSet", "关闭对象【ResultSet】出错");
+		}
+	}
 	private static void printSql(String sql, Serializable... params) {
 		Optional<StackTraceElement> o = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Dao")||st.getClassName().contains("Dao$")).findFirst();
 		if(o.isPresent()) {

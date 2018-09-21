@@ -5,10 +5,8 @@ import java.io.Serializable;
 import irille.pub.bean.BeanMain;
 import irille.pub.util.GenericsUtils;
 
-public abstract class BeanAction<T extends BeanMain<?, ?>, R extends Serializable> extends BaseAction {
+public abstract class BeanAction<T extends BeanMain<?, ?>, R extends Serializable> {
 	
-	private static final long serialVersionUID = -3099350026313996838L;
-
 	@SuppressWarnings("unchecked")
 	public BeanAction() {
 		beanClass = (Class<T>)GenericsUtils.getSuperClassGenricType(getClass());

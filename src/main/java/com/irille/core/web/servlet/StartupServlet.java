@@ -12,6 +12,7 @@ import org.apache.log4j.Logger;
 
 import com.irille.core.commons.annotation.Scanner;
 import com.irille.core.web.config.Configuration;
+import com.irille.core.web.config.Configuration.RunWithStartup;
 
 public class StartupServlet extends HttpServlet {
 

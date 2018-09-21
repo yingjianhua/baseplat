@@ -3,6 +3,7 @@ package com.irille.core.repository.query;
 import irille.pub.Log;
 import irille.pub.bean.Bean;
 import irille.pub.bean.BeanBase;
+import irille.pub.bean.BeanMain;
 
 import java.io.Serializable;
 import java.util.List;
@@ -46,11 +47,25 @@ public class SqlQuery extends AbstractQuery{
 		return this;
 	}
 
-	public <T extends Bean<?, ?>> T query(Class<T> beanClass) {
-		return super.queryBean(beanClass);
+	/**
+	 * 通过pkey查询bean对象
+	 * @author yingjianhua
+	 */
+	@SuppressWarnings("unchecked")
+	public <R extends Object> R query(Class<R> resultClass) {
+		if(BeanMain.class.isAssignableFrom(resultClass)) {
+			return (R)queryBean((Class<Bean<?, ?>>)resultClass);
+		} else {
+			return super.queryObject(resultClass);
+		}
 	}
-	public <T extends Bean<?, ?>> List<T> queryList(Class<T> beanClass) {
-		return super.queryBeans(beanClass);
+	@SuppressWarnings("unchecked")
+	public <R extends Object> List<R> queryList(Class<R> resultClass) {
+		if(BeanMain.class.isAssignableFrom(resultClass)) {
+			return (List<R>)queryBeans((Class<Bean<?, ?>>)resultClass);
+		} else {
+			return super.queryObjects(resultClass);
+		}
 	}
 	public <T extends Object> T queryObject(Class<T> resultClass) {
 		return super.queryObject(resultClass);

@@ -34,8 +34,6 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 import irille.pub.Log;
 import irille.pub.Str;
@@ -60,8 +58,12 @@ public class ImageUtils {
 			bfImage.getGraphics().drawImage(image.getScaledInstance(width, height, Image.SCALE_SMOOTH),
 			    0, 0, null);
 			FileOutputStream os = new FileOutputStream(dist);
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
-			encoder.encode(bfImage);
+			
+			ImageIO.write(bfImage, "jpg", os);
+//			jdk1.7后 JPEGImageEncoder 不再使用
+//			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
+//			encoder.encode(bfImage);
+			
 			os.close();
 			System.out.println("创建缩略图成功");
 		} catch (Exception e) {
@@ -78,8 +80,12 @@ public class ImageUtils {
 			bfImage.getGraphics().drawImage(image.getScaledInstance(width, height, Image.SCALE_SMOOTH),
 			    0, 0, null);
 			FileOutputStream os = new FileOutputStream(dist);
-			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
-			encoder.encode(bfImage);
+			
+			ImageIO.write(bfImage, "jpg", os);
+//			jdk1.7后 JPEGImageEncoder 不再使用
+//			JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(os);
+//			encoder.encode(bfImage);
+			
 			os.close();
 			System.out.println("创建缩略图成功");
 		} catch (Exception e) {

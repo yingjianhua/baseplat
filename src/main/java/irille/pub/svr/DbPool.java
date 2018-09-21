@@ -12,6 +12,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.irille.core.repository.db.ConnectionManager;
+
 import snaq.db.ConnectionPoolManager;
 
 public class DbPool {
@@ -66,52 +68,74 @@ public class DbPool {
 	}
 
 	private Connection getConnection(String poolName) {
-		Connection connection;
+//		Connection connection;
 		try {
-			connection = _poolManager.getConnection(poolName);
+			return ConnectionManager.getConnection();
+//			connection = _poolManager.getConnection(poolName);
 		} catch (SQLException e) { 
 			throw LOG.err(e, "getConn", "连接池取对象出错");
 		}
-		return connection;
+//		return connection;
 	}
 
 	// 清空连接池
 	public void release(String poolName) {
-		if (_poolManager.getPool(poolName) != null)
-			_poolManager.getPool(poolName).release();
+		try {
+			ConnectionManager.releaseConnection();
+		} catch (SQLException e) { 
+			throw LOG.err(e, "getConn", "连接池释放出错");
+		}
+//		if (_poolManager.getPool(poolName) != null)
+//			_poolManager.getPool(poolName).release();
 	}
 
 	public void releaseAll() {
-		_poolManager.release();
+		try {
+			ConnectionManager.releaseConnection();
+		} catch (SQLException e) { 
+			throw LOG.err(e, "getConn", "连接池释放出错");
+		}
+//		_poolManager.release();
 	}
 
 	public Connection getConn() {
-		Connection conn = _conns.get();
-		if (conn == null) {
-			conn = getConnection();
-			try {
-				conn.setAutoCommit(false);
-			} catch (SQLException e) {
-				LOG.err("setCommit", "关闭自动提交出错", e);
-			}
-			_conns.set(conn);
-			return conn;
+		try {
+			return ConnectionManager.getConnection();
+		} catch (SQLException e) { 
+			throw LOG.err(e, "getConn", "连接池取对象出错");
 		}
-		return conn;
+		
+//		Connection conn = _conns.get();
+//		if (conn == null) {
+//			conn = getConnection();
+//			try {
+//				conn.setAutoCommit(false);
+//			} catch (SQLException e) {
+//				LOG.err("setCommit", "关闭自动提交出错", e);
+//			}
+//			_conns.set(conn);
+//			return conn;
+//		}
+//		return conn;
 	}
 
 	// 每次通信最后必须调用关闭连接
 	public void removeConn() {
-		Connection conn = _conns.get();
-		if (conn != null) {
-			_conns.remove();
-			try {
-				if (conn.isClosed() == false)
-					conn.close();
-			} catch (SQLException e) {
-				throw LOG.err(e, "closeConn", "关闭连接对象出错");
-			}
+		try {
+			ConnectionManager.closeConnection();
+		} catch (SQLException e) { 
+			throw LOG.err(e, "getConn", "数据库连接关闭出错");
 		}
+//		Connection conn = _conns.get();
+//		if (conn != null) {
+//			_conns.remove();
+//			try {
+//				if (conn.isClosed() == false)
+//					conn.close();
+//			} catch (SQLException e) {
+//				throw LOG.err(e, "closeConn", "关闭连接对象出错");
+//			}
+//		}
 	}
 
 	public static final void close(PreparedStatement stmt, ResultSet rs) {
