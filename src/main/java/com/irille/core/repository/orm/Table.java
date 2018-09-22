@@ -20,11 +20,16 @@ public class Table <T extends Entity> {
 	private String name;
 	private String catalog;//数据库名
 	private Index[] indexes;
+	private Column primaryKey;
 	private Column[] columns;
 	private String comment;//描述
 	
 	Table(Class<T> entityClass, String name, Index[] indexes, Column[] columns, String comment) {
-		Stream.of(columns).forEach(column->column.table=this);
+		Stream.of(columns).forEach(column->{
+			column.table=this;
+			if(column.primary)
+				this.primaryKey=column;
+		});
 		this.entity = entityClass;
 		this.name = name;
 		this.indexes = indexes;
@@ -43,6 +48,9 @@ public class Table <T extends Entity> {
 	}
 	public Index[] indexes() {
 		return Arrays.copyOf(indexes, indexes.length);
+	}
+	public Column primaryKey() {
+		return primaryKey;
 	}
 	public Column[] columns() {
 		return Arrays.copyOf(columns, columns.length);

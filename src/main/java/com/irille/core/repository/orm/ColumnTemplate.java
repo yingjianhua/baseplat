@@ -11,10 +11,10 @@ public enum ColumnTemplate implements IColumnTemplate {
 	JSON(ColumnFactory.type(ColumnTypes.JSONOBJECT)),
 	I18N(JSON.copy()),
 	
-	INT__11(ColumnFactory.type(ColumnTypes.INT)),
+	INT__11(ColumnFactory.type(ColumnTypes.INT).length(11)),
 	PKEY(INT__11.primary(true).autoIncrement(true)),
 	
-	OPTION(ColumnFactory.type(ColumnTypes.OPTLINE)),
+	OPTION(ColumnFactory.type(ColumnTypes.OPTLINE).length(4)),
 	;
 	ColumnBuilder builder;
 	

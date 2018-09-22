@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import org.apache.log4j.Logger;
 
 import com.irille.core.repository.db.ConnectionManager;
+import com.irille.core.repository.orm.Entity;
 
 import irille.pub.Log;
 import irille.pub.bean.Bean;
@@ -93,6 +94,13 @@ public abstract class AbstractQuery {
 	 */
 	protected <T extends Bean<?, ?>> T queryBean(Class<T> beanClass) {
 		return query(rs->ResultMapper.asBean(rs, beanClass));
+	}
+	/**
+	 * 根据字段名将数据注入entity
+	 * @author yingjianhua
+	 */
+	protected <T extends Entity> T queryEntity(Class<T> beanClass) {
+		return query(rs->ResultMapper.asEntity(rs, beanClass));
 	}
 	/**
 	 * 执行sql语句

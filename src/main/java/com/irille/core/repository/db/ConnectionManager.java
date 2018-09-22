@@ -27,9 +27,9 @@ public class ConnectionManager {
 		return current_thread_connection.get();
 	}
 	public static void releaseConnection() throws SQLException {
+		closeConnection();
 		if(current_thread_connection.get()!=null)
 			current_thread_connection.remove();
-		closeConnection();
 	}
 	public static void closeConnection() throws SQLException {
 		Connection connection = current_thread_connection.get();

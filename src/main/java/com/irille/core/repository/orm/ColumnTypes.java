@@ -1,7 +1,6 @@
 package com.irille.core.repository.orm;
 
 import java.math.BigDecimal;
-import java.text.MessageFormat;
 import java.util.Date;
 
 import org.json.JSONArray;
@@ -20,7 +19,7 @@ public enum ColumnTypes {
 	DOUBLE(Double.class, "DOUBLE"),
 	STRINGTEXT(String.class, "MEDIUMTEXT"),
 	TEXT(String.class, "TEXT"),
-	OPTLINE(String.class, "TINYINT"),
+	OPTLINE(Byte.class, "TINYINT"),
 	BLOB(String.class, "TEXT"),
 	CLOB(String.class, "TEXT"),
 	CHAR(String.class, "CHAR"),
@@ -29,34 +28,31 @@ public enum ColumnTypes {
 	JSONARRAY(JSONArray.class, "JSON"),
 	;
 	Class<?> javaClass;
-	
-	String sqlType;
+	private String sqlType;
 	static final String TAB = "\t";
 	static final String LN = "\r\n";
-	MessageFormat getterSetterTemplate = new MessageFormat(TAB+"public {0} {1}() '{'"+LN+TAB+TAB+"return {2};"+LN+TAB+"'}'"+LN+TAB+"public void {3}({0} {2}) '{'"+LN+TAB+TAB+"this.{2} = {2};"+LN+TAB+"'}'"+LN);
-	MessageFormat fieldCommentTemplate = new MessageFormat(TAB+"private {0} {1}; // {2} {3}({4})<{5}>"+LN);//TAB+"private String _rem;	// 备注  STR(200)<null>";
-	MessageFormat initTemplate = new MessageFormat(TAB+TAB+"{0} = {1}; // {2} {3}({4})"+LN) ;
-	
+	private String getterSetterTemplate = TAB+"public {0} {1}() '{'"+LN+TAB+TAB+"return {2};"+LN+TAB+"'}'"+LN+TAB+"public void {3}({0} {2}) '{'"+LN+TAB+TAB+"this.{2} = {2};"+LN+TAB+"'}'"+LN;
+	private String fieldCommentTemplate = TAB+"private {0} {1}; // {2}{3} {4}({5}){6}"+LN+"{7}";//TAB+"private String _rem;	// 备注  STR(200)<null>";
+	private String initTemplate = TAB+TAB+"{0} = {1}; // {2}{3} {4}({5})"+LN;
+
 	ColumnTypes(Class<?> javaClass, String sqlType) {
 		this.javaClass = javaClass;
 		this.sqlType = sqlType;
 	}
-	public String getFieldComment(Column column) {
-		return fieldCommentTemplate.format(new String[] {this.javaClass.getSimpleName(), column.fieldName(), column.showName(), this.name(), column.getLength()+"", column.isNullable()?"null":""});
+	public String getGetterSetterTemplate() {
+		return getterSetterTemplate;
 	}
-	public String getGetterSetterComment(Column column) {
-		return getterSetterTemplate.format(new String[] {this.javaClass.getSimpleName(), column.getterMethod(), column.fieldName(), column.setterMethod()});
+	public String getFieldCommentTemplate() {
+		return fieldCommentTemplate;
 	}
-	public String getInitComment(Column column) {
-		if(column.isPrimary()&&column.isAutoIncrement())
-			return "";
-		String defaultValue;
-		if (column.defaultValue() == null)
-			defaultValue =  "null";
-		else if (column.defaultValue() instanceof BigDecimal)
-			defaultValue = "new BigDecimal("+column.defaultValue().toString()+")";
-		else
-			defaultValue = column.defaultValue().toString();
-		return initTemplate.format(new String[] {column.fieldName(), defaultValue, column.showName(), this.name(), column.getLength()+"",});
+	public String getInitTemplate() {
+		return initTemplate;
 	}
+	public String sqlType() {
+		return sqlType;
+	}
+	public Class<?> javaClass() {
+		return javaClass;
+	}
+
 }

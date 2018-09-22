@@ -43,9 +43,9 @@ public class EntitySrc implements IPubVars {
 			.append("	public " + Str.getClazzLastCode(clazz) + " init() {").append(LN)
 			.append("		super.init();").append(LN);
 		for(Column column:columns) {
-			_autoVarDef.append(column.type().getFieldComment(column)); // 变量定义
-			_autoGetSet.append(column.type().getGetterSetterComment(column)); // 方法
-			_autoInit.append(column.type().getInitComment(column));
+			_autoVarDef.append(column.getFieldComment()); // 变量定义
+			_autoGetSet.append(column.getGetterSetterComment()); // 方法
+			_autoInit.append(column.getInitComment());
 		}
 		_autoInit.append("		return this;" + LN + "	}").append(LN);
 	}

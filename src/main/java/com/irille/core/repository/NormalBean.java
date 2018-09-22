@@ -33,9 +33,28 @@ public class NormalBean extends Entity {
 		}
 	}
 
-	private Integer id;
-	private String name;
-	
+	// >>>以下是自动产生的源代码行--源代码--请保留此行用于识别>>>
+
+	// 实例变量定义-----------------------------------------
+	private Integer pkey; // pkey INT(11)
+	private Integer id; // id INT(20)
+	private String name; // name VARCHAR(200)<null>
+
+	@Override
+	public NormalBean init() {
+		super.init();
+		id = null; // id INT(20)
+		name = null; // name VARCHAR(200)
+		return this;
+	}
+
+	// 方法------------------------------------------------
+	public Integer getPkey() {
+		return pkey;
+	}
+	public void setPkey(Integer pkey) {
+		this.pkey = pkey;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -48,5 +67,6 @@ public class NormalBean extends Entity {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
+	// <<<以上是自动产生的源代码行--源代码--请保留此行用于识别<<<
 }

@@ -1,11 +1,5 @@
 package com.irille.core.repository.query;
 
-import irille.pub.Log;
-import irille.pub.bean.Bean;
-import irille.pub.bean.BeanBase;
-import irille.pub.tb.Fld;
-import irille.pub.tb.Tb;
-
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -15,6 +9,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
+import com.irille.core.repository.orm.Column;
+import com.irille.core.repository.orm.Entity;
+
+import irille.pub.ClassTools;
+import irille.pub.Log;
+import irille.pub.bean.Bean;
+import irille.pub.bean.BeanBase;
+import irille.pub.tb.Fld;
+import irille.pub.tb.Tb;
 
 public class ResultMapper {
 	public static final Log LOG = new Log(ResultMapper.class);
@@ -28,7 +32,7 @@ public class ResultMapper {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private static final <T extends Bean> T fromResultSet(ResultSet rs, Class<T> beanClass) {
+	private static final <T extends Bean> T fromResultSet2(ResultSet rs, Class<T> beanClass) {
 		T bean = BeanBase.newInstance(beanClass);
 		Fld[] flds = Tb.getTBByBean(beanClass).getFlds(); 
 		try {
@@ -45,10 +49,98 @@ public class ResultMapper {
 		}
 	}
 	
+	@SuppressWarnings("rawtypes")
+	private static final <T extends Entity> T fromResultSet(ResultSet rs, Class<T> entityClass) {
+		Column[] columns = Entity.table(entityClass).columns();
+		try {
+			T entity = entityClass.newInstance();
+			for (Column column : columns) {
+				try {
+					Object value = rs.getObject(column.columnName());
+					switch (column.type()) {
+					case BLOB:
+						value = rs.getObject(column.columnName());
+						break;
+					case BOOLEAN:
+						value = rs.getObject(column.columnName());
+						break;
+					case BYTE:
+						value = rs.getByte(column.columnName());
+						break;
+					case CHAR:
+						value = rs.getObject(column.columnName());
+						break;
+					case CLOB:
+						value = rs.getObject(column.columnName());
+						break;
+					case DATE:
+						value = rs.getObject(column.columnName());
+						break;
+					case DEC:
+						value = rs.getObject(column.columnName());
+						break;
+					case DOUBLE:
+						value = rs.getObject(column.columnName());
+						break;
+					case INT:
+						value = rs.getObject(column.columnName());
+						break;
+					case JSONARRAY:
+						value = rs.getObject(column.columnName());
+						break;
+					case JSONOBJECT:
+						value = rs.getObject(column.columnName());
+						break;
+					case LONG:
+						value = rs.getObject(column.columnName());
+						break;
+					case OPTLINE:
+						value = rs.getObject(column.columnName());
+						break;
+					case SHORT:
+						value = rs.getObject(column.columnName());
+						break;
+					case STR:
+						value = rs.getObject(column.columnName());
+						break;
+					case STRINGTEXT:
+						value = rs.getObject(column.columnName());
+						break;
+					case STROPT:
+						value = rs.getObject(column.columnName());
+						break;
+					case TEXT:
+						value = rs.getObject(column.columnName());
+						break;
+					case TIME:
+						value = rs.getObject(column.columnName());
+						break;
+					default:
+						value = rs.getObject(column.columnName());
+						break;
+					
+					}
+					try {
+						if(value != null)
+							column.setterMethod().invoke(entity, value);
+					} catch (Exception e1) {
+						throw LOG.err(e1, "setField", "对Bean的字段【{0}】赋值出错!", column.fieldName());
+					}
+				} catch (SQLException e) {
+				}
+			}
+			return entity;
+		} catch (InstantiationException | IllegalAccessException e) {
+			throw LOG.err(e, "newInstanceErr", "初始化[{0}]对象出错", entityClass);
+		} catch (Exception e) {
+			throw LOG.err(e, "setBeanfromResultSet", "数据库记录->对象【{0}】时出错!", entityClass);
+		}
+	}
+	
 	public static <T extends Bean<?, ?>> T asBean(ResultSet rs, Class<T> beanClass) {
 		try {
 			if(rs.next())
-				return fromResultSet(rs, beanClass);
+				return fromResultSet2(rs, beanClass);
 			return null;
 		} catch (Exception e) {
 			throw LOG.err("asBeanFromResultSet", "数据库记录->[{0}]对象出错", beanClass.getName());
@@ -59,11 +151,32 @@ public class ResultMapper {
 		try {
 			Vector<T> list = new Vector<T>();
 			while (rs.next()) {
-				list.add(fromResultSet(rs, beanClass));
+				list.add(fromResultSet2(rs, beanClass));
 			}
 			return list;
 		} catch (SQLException e) {
 			throw LOG.err("asBeanListFromResultSet", "数据库记录->List<{0}>对象出错", beanClass.getName());
+		}
+	}
+	
+	public static <T extends Entity> T asEntity(ResultSet rs, Class<T> entityClass) {
+		try {
+			if(rs.next())
+				return fromResultSet(rs, entityClass);
+			return null;
+		} catch (Exception e) {
+			throw LOG.err("asEntityFromResultSet", "数据库记录->[{0}]对象出错", entityClass.getName());
+		}
+	}
+	public static <T extends Entity> List<T> asEntityList(ResultSet rs, Class<T> entityClass) {
+		try {
+			Vector<T> list = new Vector<T>();
+			while (rs.next()) {
+				list.add(fromResultSet(rs, entityClass));
+			}
+			return list;
+		} catch (SQLException e) {
+			throw LOG.err("asEntityListFromResultSet", "数据库记录->List<{0}>对象出错", entityClass.getName());
 		}
 	}
 	public static <T extends Object> List<T> asObjects(ResultSet rs, Class<T> resultClass) {
@@ -117,6 +230,15 @@ public class ResultMapper {
 					case Types.SMALLINT:
 						value = rs.getShort(i+1);
 						break;
+					case Types.DATE:
+						value = rs.getDate(i+1);
+						break;
+					case Types.TIME:
+						value = rs.getTime(i+1);
+						break;
+					case Types.TIMESTAMP:
+						value = rs.getDate(i+1);
+						break;
 					default:
 						value = rs.getObject(i+1);
 					}
@@ -160,6 +282,15 @@ public class ResultMapper {
 						break;
 					case Types.SMALLINT:
 						value = rs.getShort(i+1);
+						break;
+					case Types.DATE:
+						value = rs.getDate(i+1);
+						break;
+					case Types.TIME:
+						value = rs.getTime(i+1);
+						break;
+					case Types.TIMESTAMP:
+						value = rs.getDate(i+1);
 						break;
 					default:
 						value = rs.getObject(i+1);

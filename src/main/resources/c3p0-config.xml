@@ -6,7 +6,7 @@
 		<property name="user">root</property>
 		<property name="password">root</property>
 		
-		<property name="acquireIncrement">con_test</property>
+		<property name="acquireIncrement">5</property>
 		<property name="initialPoolSize">10</property>
 		<property name="minPoolSize">10</property>
 		<property name="maxPoolSize">100</property>
@@ -18,7 +18,7 @@
 		<property name="user">root</property>
 		<property name="password">root</property>
 		
-		<property name="acquireIncrement">con_test</property>
+		<property name="acquireIncrement">5</property>
 		<property name="initialPoolSize">10</property>
 		<property name="minPoolSize">10</property>
 		<property name="maxPoolSize">100</property>
