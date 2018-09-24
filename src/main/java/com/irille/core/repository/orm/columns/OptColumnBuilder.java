@@ -18,20 +18,15 @@ public class OptColumnBuilder extends ColumnBuilder {
     }
 
     public Column create(IColumnField field) {
-    	if(this.columnName()==null)
-    		this.columnName(field.name().toLowerCase());
+    	String columnName = this.columnName()==null?field.name().toLowerCase():this.columnName();
     	String fieldName = Str.tranLineUpperToField(field.name().indexOf("__")<0?field.name():field.name().substring(0, field.name().indexOf("__")));
-    	if(length()==0)
-    		this.length(4);
-    	if(showName()==null)
-    		this.showName(fieldName);
-    	if(comment()==null)
-    		comment(showName());
+    	String showName = this.showName()==null?fieldName:this.showName();
+    	String comment = this.comment()==null?showName:this.comment();
+    	int length = this.length()==0?4:this.length();
     	if(defaultValue() != null)
     		assertTrue(opt.getClass()==defaultValue().getClass());
-    	if(nullable()==false&&defaultValue()==null)
-    		defaultValue(opt);
-    	return new OptColumn(opt, showName(), columnName(), fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length(), precision(), scale(), comment()); 
+    	Object defaultValue = (nullable()==false&&defaultValue()==null)?opt:this.defaultValue();
+    	return new OptColumn(opt, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue, columnDefinition(), length, precision(), scale(), comment); 
     }
     
     public OptColumnBuilder opt(IEnumOpt opt) {

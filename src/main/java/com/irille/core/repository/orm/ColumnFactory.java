@@ -30,7 +30,6 @@ public class ColumnFactory {
 			return new I18NColumnBuilder() {{
 				type(ColumnTypes.JSONOBJECT);
 				showName(builder.showName());
-				columnName(builder.columnName());
 				defaultValue(builder.defaultValue());
 				unique(builder.unique());
 				primary(builder.primary());
@@ -43,7 +42,6 @@ public class ColumnFactory {
 		} else if(builder instanceof NormalColumnBuilder) {
 			return new NormalColumnBuilder(builder.type()) {{
 				showName(builder.showName());
-				columnName(builder.columnName());
 				defaultValue(builder.defaultValue());
 				unique(builder.unique());
 				primary(builder.primary());
@@ -56,7 +54,6 @@ public class ColumnFactory {
 		} else if(builder instanceof OneToManyColumnBuilder) {
 			return new OneToManyColumnBuilder(((OneToManyColumnBuilder)builder).targetEntity()) {{
 				showName(builder.showName());
-				columnName(builder.columnName());
 				defaultValue(builder.defaultValue());
 				unique(builder.unique());
 				primary(builder.primary());
@@ -69,7 +66,6 @@ public class ColumnFactory {
 		} else if(builder instanceof OptColumnBuilder) {
 			return new OptColumnBuilder(((OptColumnBuilder)builder).opt()) {{
 				showName(builder.showName());
-				columnName(builder.columnName());
 				defaultValue(builder.defaultValue());
 				unique(builder.unique());
 				primary(builder.primary());

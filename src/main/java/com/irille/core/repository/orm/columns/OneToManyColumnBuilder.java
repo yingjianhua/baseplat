@@ -25,14 +25,11 @@ public class OneToManyColumnBuilder<T extends Entity> extends ColumnBuilder {
     }
     
     public Column create(IColumnField field) {
-    	if(columnName()==null)
-    		columnName(field.name().toLowerCase());
+    	String columnName = this.columnName()==null?field.name().toLowerCase():this.columnName();
     	String fieldName = Str.tranLineUpperToField(field.name().indexOf("__")<0?field.name():field.name().substring(0, field.name().indexOf("__")));
-    	if(showName()==null)
-    		showName(fieldName);
-    	if(comment()==null)
-    		comment(showName());
-    	return new OneToManyColumn(targetEntity, showName(), columnName(), fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length(), precision(), scale(), comment()); 
+    	String showName = this.showName()==null?fieldName:this.showName();
+    	String comment = this.comment()==null?showName:this.comment();
+    	return new OneToManyColumn(targetEntity, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length(), precision(), scale(), comment); 
     }
     
     public void targetEntity(Class<T> targetEntity) {

@@ -1,7 +1,11 @@
 package com.irille.core.repository;
 
-import org.json.JSONObject;
 
+import java.sql.SQLException;
+import java.util.Map;
+
+import com.irille.core.controller.JsonWriter;
+import com.irille.core.repository.db.ConnectionManager;
 import com.irille.core.repository.orm.Column;
 import com.irille.core.repository.orm.ColumnBuilder;
 import com.irille.core.repository.orm.ColumnFactory;
@@ -17,6 +21,53 @@ import irille.pub.tb.EnumLine;
 import irille.pub.tb.IEnumOpt;
 
 public class User extends Entity {
+	
+	public static void main(String[] args) {
+		User.table.getClass();
+//		Map<String, Object> map = SELECT(User.class).queryMap();
+		Map<String, Object> map = SELECT(field.PKEY).SELECT(field.PRODUCT_NAME).FROM(User.class).queryMap();
+		JsonWriter.toConsole(map);
+//		User.SELECT(User.class).queryMap();
+//		testLoad();
+//		Integer pkey = testIns();
+//		testLoad();
+//		testUpd();
+//		testLoad();
+//		testDel(pkey);
+//		testLoad();
+		try {
+			ConnectionManager.commitConnection();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	public static Integer testIns() {
+		User user = new User();
+		user.setId(2);
+		user.setNormalBean(1);
+		user.setName("名字");
+		user.stType(OptType.admin);
+		user.setEnabled(true);
+		user.setUsername("用户名");
+		user.setPassword("密码");
+		user.setBillAddr("zhangdandizhi");
+		user.setEmail("a86291151@163.com");
+		user.setProductName("{}");
+		user.setIsValid(true);
+		user.ins();
+		return user.getPkey();
+	}
+	public static void testLoad() {
+		JsonWriter.toConsole(User.SELECT(User.class).queryMap());
+	}
+	public static void testUpd() {
+		User user = User.SELECT(User.class).query();
+		user.setName("新名字");
+		user.upd();
+	}
+	public static void testDel(Integer pkey) {
+		SELECT(User.class, pkey).del();
+	}
 
 	public static final Table<User> table = TableFactory.entity(User.class).column(field.values()).index(true, field.ID).index(false, field.ID, field.NAME).create();
 
@@ -34,7 +85,8 @@ public class User extends Entity {
 		
 	}
 	public enum field implements IColumnField {
-		ID(ColumnTemplate.INT__11.length(11)),
+		PKEY(ColumnTemplate.PKEY),
+		ID(ColumnTemplate.INT__11),
 		NORMAL_BEAN(ColumnFactory.oneToMany(NormalBean.class)),
 		NAME(ColumnTemplate.STR__200.nullable(true).showName("名字").defaultValue("")),
 		TYPE(ColumnFactory.opt(OptType.anonymous).showName("用户类型")),
@@ -43,7 +95,8 @@ public class User extends Entity {
 		PASSWORD(ColumnTemplate.STR__200.nullable(true).showName("密码")),
 		BILL_ADDR(ColumnTemplate.STR__200.nullable(true)),
 		EMAIL(ColumnTemplate.EMAIL),
-		PRODUCT_NAME(ColumnTemplate.I18N)
+		PRODUCT_NAME(ColumnTemplate.I18N),
+		IS_VALID(ColumnTemplate.BOOLEAN.showName("是否合法"))
 		;
 		private Column column;
 
@@ -63,6 +116,7 @@ public class User extends Entity {
 	// >>>以下是自动产生的源代码行--源代码--请保留此行用于识别>>>
 
 	// 实例变量定义-----------------------------------------
+	private Integer pkey; // pkey INT(11)
 	private Integer id; // id INT(11)
 	private Integer normalBean; // normalBean<表主键:NormalBean> INT(11)
 	private String name; // 名字 VARCHAR(200)<null>
@@ -70,12 +124,13 @@ public class User extends Entity {
 	// admin:0,管理员
 	// anonymous:1,匿名用户
 	// normal:2,普通用户
-	private Boolean enabled; // enabled TINYINT(0)
+	private Boolean enabled; // enabled TINYINT(1)
 	private String username; // 用户名 VARCHAR(200)
 	private String password; // 密码 VARCHAR(200)<null>
 	private String billAddr; // billAddr VARCHAR(200)<null>
 	private String email; // 邮箱地址 VARCHAR(100)<null>
-	private JSONObject productName; // productName JSON(0)
+	private String productName; // productName JSON(0)
+	private Boolean isValid; // 是否合法 TINYINT(1)
 
 	@Override
 	public User init() {
@@ -84,16 +139,23 @@ public class User extends Entity {
 		normalBean = null; // normalBean INT(11)
 		name = ""; // 名字 VARCHAR(200)
 		type = OptType.anonymous.getLine().getKey(); // 用户类型<OptType> TINYINT(4)
-		enabled = null; // enabled TINYINT(0)
+		enabled = null; // enabled TINYINT(1)
 		username = null; // 用户名 VARCHAR(200)
 		password = null; // 密码 VARCHAR(200)
 		billAddr = null; // billAddr VARCHAR(200)
 		email = null; // 邮箱地址 VARCHAR(100)
 		productName = null; // productName JSON(0)
+		isValid = null; // 是否合法 TINYINT(1)
 		return this;
 	}
 
 	// 方法------------------------------------------------
+	public Integer getPkey() {
+		return pkey;
+	}
+	public void setPkey(Integer pkey) {
+		this.pkey = pkey;
+	}
 	public Integer getId() {
 		return id;
 	}
@@ -160,11 +222,17 @@ public class User extends Entity {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public JSONObject getProductName() {
+	public String getProductName() {
 		return productName;
 	}
-	public void setProductName(JSONObject productName) {
+	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+	public Boolean getIsValid() {
+		return isValid;
+	}
+	public void setIsValid(Boolean isValid) {
+		this.isValid = isValid;
 	}
 
 	// <<<以上是自动产生的源代码行--源代码--请保留此行用于识别<<<

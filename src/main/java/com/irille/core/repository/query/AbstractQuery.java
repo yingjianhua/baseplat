@@ -10,9 +10,11 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.irille.core.repository.db.ConnectionManager;
+import com.irille.core.repository.orm.ColumnTypes;
 import com.irille.core.repository.orm.Entity;
 
 import irille.pub.Log;
@@ -21,7 +23,7 @@ import irille.pub.bean.BeanBase;
 
 public abstract class AbstractQuery {
 	private static final Log LOG = new Log(AbstractQuery.class);
-	private static final Logger log = Logger.getLogger(AbstractQuery.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractQuery.class);
 	
 	protected static final Config config = new Config();
 	public static final void config(boolean debug) {
@@ -99,8 +101,16 @@ public abstract class AbstractQuery {
 	 * 根据字段名将数据注入entity
 	 * @author yingjianhua
 	 */
-	protected <T extends Entity> T queryEntity(Class<T> beanClass) {
-		return query(rs->ResultMapper.asEntity(rs, beanClass));
+	protected <T extends Entity> T queryEntity(Class<T> entityClass) {
+		return query(rs->ResultMapper.asEntity(rs, entityClass));
+	}
+	
+	/**
+	 * 根据字段名将数据注入entity
+	 * @author yingjianhua
+	 */
+	protected <T extends Entity> List<T> queryEntitys(Class<T> entityClass) {
+		return query(rs->ResultMapper.asEntityList(rs, entityClass));
 	}
 	/**
 	 * 执行sql语句
@@ -108,13 +118,33 @@ public abstract class AbstractQuery {
 	 */
 	protected int executeUpdate() {
 		printSql(getSql(), getParams());
-//		if(needDebug()) printSql(getSql(), getParams());
 		PreparedStatement stmt = null;
 		try {
 			stmt = ConnectionManager.getConnection().prepareStatement(getSql());
 			BeanBase.toPreparedStatementData(stmt, 1, getParams());
 			return stmt.executeUpdate();
 		} catch (Exception e) {
+			logger.error("执行executeUpdate出错:{}", e.getMessage());
+			throw LOG.err("executeUpdate", "执行【{0}】出错", getSql());
+		} finally {
+			close(stmt);
+		}
+	}
+	/**
+	 * 执行sql语句
+	 * @author yingjianhua
+	 */
+	protected Serializable executeUpdateReturnGeneratedKey(ColumnTypes type) {
+		printSql(getSql(), getParams());
+		PreparedStatement stmt = null;
+		try {
+			stmt = ConnectionManager.getConnection().prepareStatement(getSql(), Statement.RETURN_GENERATED_KEYS);
+			BeanBase.toPreparedStatementData(stmt, 1, getParams());
+			stmt.executeUpdate();
+			ResultSet rs = stmt.getGeneratedKeys();
+			return (Serializable)ResultMapper.asColumn(rs, type, "GENERATED_KEY");
+		} catch (Exception e) {
+			logger.error("执行executeUpdate出错:{}", e.getMessage());
 			throw LOG.err("executeUpdate", "执行【{0}】出错", getSql());
 		} finally {
 			close(stmt);
@@ -179,14 +209,14 @@ public abstract class AbstractQuery {
 	private static void printSql(String sql, Serializable... params) {
 		Optional<StackTraceElement> o = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Dao")||st.getClassName().contains("Dao$")).findFirst();
 		if(o.isPresent()) {
-			log.debug("sql:"+sql+"|"+params(params)+"] [stackTrace: "+o.get().toString());
+			logger.debug("sql:"+sql+"|"+params(params)+"] [stackTrace: "+o.get().toString());
 		} else {
 			Optional<StackTraceElement> o2 = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Action")||st.getClassName().contains("Action$")).findFirst();
 			if(o2.isPresent())
-				log.warn("数据库查询没有写在Dao里面,有问题... "+o2.get().toString());
+				logger.warn("数据库查询没有写在Dao里面,有问题... "+o2.get().toString());
 			else
-				log.warn("数据库查询没有写在Dao里面,有问题... 未知位置!!!");
-			log.debug("sql:"+sql+"|"+params(params));
+				logger.warn("数据库查询没有写在Dao里面,有问题... 未知位置!!!");
+			logger.debug("sql:"+sql+"|"+params(params));
 		}
 	}
 	

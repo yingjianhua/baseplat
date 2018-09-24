@@ -73,4 +73,5 @@ public class Query {
 	public static <T extends BeanMain<?, ?>> BeanQuery<T> DELETE(Class<T> beanClass) {
 		return new BeanQuery<>().DELETE(beanClass);
 	}
+	
 }

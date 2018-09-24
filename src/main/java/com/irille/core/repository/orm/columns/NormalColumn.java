@@ -2,7 +2,6 @@ package com.irille.core.repository.orm.columns;
 
 import com.irille.core.repository.orm.Column;
 import com.irille.core.repository.orm.ColumnTypes;
-import com.irille.core.repository.orm.Table;
 
 public class NormalColumn extends Column{
 

@@ -6,6 +6,7 @@ import java.util.List;
 import com.irille.core.repository.orm.Entity;
 import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.query.EntityQuery;
+import com.irille.core.repository.query.Predicate;
 import com.irille.core.repository.query.SqlQuery;
 import com.irille.core.repository.sql.SQL;
 
@@ -45,6 +46,10 @@ public class Query2 {
 		EntityQuery<?> q = new EntityQuery<>();
 		return q.SELECT(flds);
 	}
+	public static EntityQuery<?> SELECT(Predicate... predicate) {
+		EntityQuery<?> q = new EntityQuery<>();
+		return q.SELECT(predicate);
+	}
 	public static <T extends Entity> EntityQuery<T> SELECT(Class<T> beanClass) {
 		EntityQuery<?> q = new EntityQuery<>();
 		return q.SELECT(beanClass).FROM(beanClass);
@@ -53,9 +58,15 @@ public class Query2 {
 		EntityQuery<?> q = new EntityQuery<>();
 		return q.SELECT(beanClass).FROM(beanClass).WHERE("pkey=?", pkey).query();
 	}
+	
 	public static <T extends Entity> EntityQuery<T> UPDATE(Class<T> beanClass) {
-		EntityQuery<?> q = new EntityQuery<>();
-		return q.UPDATE(beanClass);
+		return new EntityQuery<>().UPDATE(beanClass);
+	}
+	public static <T extends Entity> EntityQuery<T> DELETE(Class<T> beanClass) {
+		return new EntityQuery<>().DELETE(beanClass);
+	}
+	public static <T extends Entity> EntityQuery<T> INSERT(Class<T> beanClass) {
+		return new EntityQuery<>().INSERT(beanClass);
 	}
 	
 	public static EntityQuery<?> SELECT(Language lang, IColumnField... flds) {
@@ -70,7 +81,5 @@ public class Query2 {
 		EntityQuery<?> q = new EntityQuery<>(lang);
 		return q.SELECT(beanClass).FROM(beanClass).WHERE("pkey=?", pkey).query();
 	}
-	public static <T extends Entity> EntityQuery<T> DELETE(Class<T> beanClass) {
-		return new EntityQuery<>().DELETE(beanClass);
-	}
+	
 }

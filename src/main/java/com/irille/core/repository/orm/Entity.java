@@ -1,5 +1,7 @@
 package com.irille.core.repository.orm;
 
+import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
 import org.junit.Test;
@@ -8,12 +10,62 @@ import org.slf4j.LoggerFactory;
 
 import com.irille.core.repository.Query2;
 import com.irille.core.repository.db.ConnectionManager;
+import com.irille.core.repository.query.EntityQuery;
 
 public abstract class Entity extends Query2{
 	
 	private static final Logger logger = LoggerFactory.getLogger(Entity.class);
 	
 	public Entity init() {return this;};
+	
+	public Entity ins() {
+		Table table = Entity.table(this.getClass());
+		EntityQuery q = INSERT(this.getClass());
+		for(Column column:table.columns()) {
+			if(column.isPrimary())
+				continue;
+			try {
+				q.VALUES(column, (Serializable)column.getterMethod().invoke(this));
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
+			}
+		}
+		Serializable key = q.executeUpdateReturnGeneratedKey(table.primaryKey().type());
+		try {
+			table.primaryKey().setterMethod().invoke(this, key);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
+		}
+		return  this;
+	}
+	public Entity upd() {
+		Table table = Entity.table(this.getClass());
+		EntityQuery q = UPDATE(this.getClass());
+		for(Column column:table.columns()) {
+			if(column.isPrimary())
+				continue;
+			try {
+				q.SET(column, (Serializable)column.getterMethod().invoke(this));
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
+			}
+		}
+		q.executeUpdate();
+		return this;
+	}
+	public void del(){
+		Table<?> table = Entity.table(this.getClass());
+		Column column = table.primaryKey();
+		Serializable primaryKeyValue;
+		try {
+			primaryKeyValue = (Serializable)column.getterMethod().invoke(this);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
+		}
+		int row = DELETE(this.getClass()).WHERE(column, "=?", primaryKeyValue).executeUpdate();
+		if(row == 0)
+			throw  LOG.err("deleteNotFound", "删除表【{0}】主键为【{1}】的记录不存在!", table.name(), primaryKeyValue);
+	}
 
 	@Test
 	public void testCreateTableIfNotExists() {

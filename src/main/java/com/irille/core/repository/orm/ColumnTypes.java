@@ -3,9 +3,6 @@ package com.irille.core.repository.orm;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 public enum ColumnTypes {
 	BYTE(Byte.class, "TINYINT"),
 	BOOLEAN(Boolean.class, "TINYINT"),
@@ -24,8 +21,8 @@ public enum ColumnTypes {
 	CLOB(String.class, "TEXT"),
 	CHAR(String.class, "CHAR"),
 	STROPT(String.class, "CHAR"),
-	JSONOBJECT(JSONObject.class, "JSON"),
-	JSONARRAY(JSONArray.class, "JSON"),
+	JSONOBJECT(String.class, "JSON"),
+	JSONARRAY(String.class, "JSON"),
 	;
 	Class<?> javaClass;
 	private String sqlType;

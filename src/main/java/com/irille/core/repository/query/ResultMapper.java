@@ -11,9 +11,9 @@ import java.util.Map;
 import java.util.Vector;
 
 import com.irille.core.repository.orm.Column;
+import com.irille.core.repository.orm.ColumnTypes;
 import com.irille.core.repository.orm.Entity;
 
-import irille.pub.ClassTools;
 import irille.pub.Log;
 import irille.pub.bean.Bean;
 import irille.pub.bean.BeanBase;
@@ -48,81 +48,84 @@ public class ResultMapper {
 			throw LOG.err(e, "setBeanfromResultSet", "数据库记录->对象【{0}】时出错!", beanClass);
 		}
 	}
+	private static final Object fromResultSet(ResultSet rs, ColumnTypes type, String columnLabel) throws SQLException {
+		Object value = null;
+		switch (type) {
+		case BLOB:
+			value = rs.getBlob(columnLabel);
+			break;
+		case BOOLEAN:
+			value = rs.getBoolean(columnLabel);
+			break;
+		case BYTE:
+			value = rs.getByte(columnLabel);
+			break;
+		case CHAR:
+			value = rs.getString(columnLabel);
+			break;
+		case CLOB:
+			value = rs.getClob(columnLabel);
+			break;
+		case DATE:
+			value = rs.getDate(columnLabel);
+			break;
+		case DEC:
+			value = rs.getBigDecimal(columnLabel);
+			break;
+		case DOUBLE:
+			value = rs.getDouble(columnLabel);
+			break;
+		case INT:
+			value = rs.getInt(columnLabel);
+			break;
+		case JSONARRAY:
+			value = rs.getString(columnLabel);
+			break;
+		case JSONOBJECT:
+			value = rs.getString(columnLabel);
+			break;
+		case LONG:
+			value = rs.getLong(columnLabel);
+			break;
+		case OPTLINE:
+			value = rs.getByte(columnLabel);
+			break;
+		case SHORT:
+			value = rs.getShort(columnLabel);
+			break;
+		case STR:
+			value = rs.getString(columnLabel);
+			break;
+		case STRINGTEXT:
+			value = rs.getString(columnLabel);
+			break;
+		case STROPT:
+			value = rs.getString(columnLabel);
+			break;
+		case TEXT:
+			value = rs.getString(columnLabel);
+			break;
+		case TIME:
+			value = rs.getDate(columnLabel);
+			break;
+		default:
+			value = rs.getObject(columnLabel);
+			break;
+		}
+		return value;
+	}
 	
-	@SuppressWarnings("rawtypes")
 	private static final <T extends Entity> T fromResultSet(ResultSet rs, Class<T> entityClass) {
 		Column[] columns = Entity.table(entityClass).columns();
 		try {
 			T entity = entityClass.newInstance();
 			for (Column column : columns) {
 				try {
-					Object value = rs.getObject(column.columnName());
-					switch (column.type()) {
-					case BLOB:
-						value = rs.getObject(column.columnName());
-						break;
-					case BOOLEAN:
-						value = rs.getObject(column.columnName());
-						break;
-					case BYTE:
-						value = rs.getByte(column.columnName());
-						break;
-					case CHAR:
-						value = rs.getObject(column.columnName());
-						break;
-					case CLOB:
-						value = rs.getObject(column.columnName());
-						break;
-					case DATE:
-						value = rs.getObject(column.columnName());
-						break;
-					case DEC:
-						value = rs.getObject(column.columnName());
-						break;
-					case DOUBLE:
-						value = rs.getObject(column.columnName());
-						break;
-					case INT:
-						value = rs.getObject(column.columnName());
-						break;
-					case JSONARRAY:
-						value = rs.getObject(column.columnName());
-						break;
-					case JSONOBJECT:
-						value = rs.getObject(column.columnName());
-						break;
-					case LONG:
-						value = rs.getObject(column.columnName());
-						break;
-					case OPTLINE:
-						value = rs.getObject(column.columnName());
-						break;
-					case SHORT:
-						value = rs.getObject(column.columnName());
-						break;
-					case STR:
-						value = rs.getObject(column.columnName());
-						break;
-					case STRINGTEXT:
-						value = rs.getObject(column.columnName());
-						break;
-					case STROPT:
-						value = rs.getObject(column.columnName());
-						break;
-					case TEXT:
-						value = rs.getObject(column.columnName());
-						break;
-					case TIME:
-						value = rs.getObject(column.columnName());
-						break;
-					default:
-						value = rs.getObject(column.columnName());
-						break;
-					
-					}
+					Object value = fromResultSet(rs, column.type(), column.columnName());
 					try {
-						if(value != null)
+						if(value != null) {
 							column.setterMethod().invoke(entity, value);
+						}
 					} catch (Exception e1) {
 						throw LOG.err(e1, "setField", "对Bean的字段【{0}】赋值出错!", column.fieldName());
 					}
@@ -156,6 +159,16 @@ public class ResultMapper {
 			return list;
 		} catch (SQLException e) {
 			throw LOG.err("asBeanListFromResultSet", "数据库记录->List<{0}>对象出错", beanClass.getName());
+		}
+	}
+	
+	public static Object asColumn(ResultSet rs, ColumnTypes type, String columnLabel) {
+		try {
+			if(rs.next())
+				return fromResultSet(rs, type, columnLabel);
+			return null;
+		} catch (Exception e) {
+			throw LOG.err("asColumnFromResultSet", "数据库记录->[{0}]字段出错", columnLabel);
 		}
 	}
 	
@@ -210,8 +223,8 @@ public class ResultMapper {
 		try {
 			Map<String, Object> map = new HashMap<>();
 //		System.out.println("column length:"+l);
-//		System.out.println("  |catalogName|tableName|schemaName|columnClassName|columnLabel|scale|columnDisplaySize|precision|columnType|columnTypeName|columnName|columnValue|"
-//				+ "javaType|");
+		System.out.println("  |catalogName|tableName|schemaName|columnClassName|columnLabel|scale|columnDisplaySize|precision|columnType|columnTypeName|columnName|columnValue|"
+				+ "javaType|");
 //		java.sql.Types
 			ResultSetMetaData md = rs.getMetaData();
 			int l = md.getColumnCount();
@@ -242,21 +255,21 @@ public class ResultMapper {
 					default:
 						value = rs.getObject(i+1);
 					}
-//				System.out.println((i+1)+""
-//						+" | "+md.getCatalogName(i+1)
-//						+" | "+md.getTableName(i+1) 
-//						+" | "+md.getSchemaName(i+1) 
-//						+" | "+md.getColumnClassName(i+1)
-//						+" | "+md.getColumnLabel(i+1)
-//						+" | "+md.getScale(i+1)
-//						+" | "+md.getColumnDisplaySize(i+1)
-//						+" | "+md.getPrecision(i+1)
-//						+" | "+md.getColumnType(i+1)
-//						+" | "+md.getColumnTypeName(i+1) 
-//						+" | "+md.getColumnName(i+1)
-//						+" | "+rs.getObject(i+1)
-//						+" | "+rs.getObject(i+1).getClass().getName()
-//						+" |");
+				System.out.println((i+1)+""
+						+" | "+md.getCatalogName(i+1)
+						+" | "+md.getTableName(i+1) 
+						+" | "+md.getSchemaName(i+1) 
+						+" | "+md.getColumnClassName(i+1)
+						+" | "+md.getColumnLabel(i+1)
+						+" | "+md.getScale(i+1)
+						+" | "+md.getColumnDisplaySize(i+1)
+						+" | "+md.getPrecision(i+1)
+						+" | "+md.getColumnType(i+1)
+						+" | "+md.getColumnTypeName(i+1) 
+						+" | "+md.getColumnName(i+1)
+						+" | "+rs.getObject(i+1)
+						+" | "+rs.getObject(i+1).getClass().getName()
+						+" |");
 					map.put(key, value);
 				}
 			}

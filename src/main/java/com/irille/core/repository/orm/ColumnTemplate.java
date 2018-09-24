@@ -15,6 +15,7 @@ public enum ColumnTemplate implements IColumnTemplate {
 	PKEY(INT__11.primary(true).autoIncrement(true)),
 	
 	OPTION(ColumnFactory.type(ColumnTypes.OPTLINE).length(4)),
+	BOOLEAN(ColumnFactory.type(ColumnTypes.BOOLEAN)),
 	;
 	ColumnBuilder builder;
 	
