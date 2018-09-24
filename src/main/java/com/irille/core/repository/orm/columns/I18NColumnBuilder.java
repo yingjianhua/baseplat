@@ -16,7 +16,7 @@ public class I18NColumnBuilder extends ColumnBuilder {
     	String fieldName = Str.tranLineUpperToField(field.name().indexOf("__")<0?field.name():field.name().substring(0, field.name().indexOf("__")));
     	String showName = this.showName()==null?fieldName:this.showName();
     	String comment = this.comment()==null?showName:this.comment();
-    	return new I18NColumn(showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length(), precision(), scale(), comment); 
+    	return new I18NColumn(field, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length(), precision(), scale(), comment); 
     }
     
 }

@@ -18,6 +18,8 @@ public abstract class Column {
 	
 	protected String fieldName;
 	
+	protected IColumnField field;
+	
 	protected ColumnTypes type;
 	
 	protected boolean unique;
@@ -46,12 +48,13 @@ public abstract class Column {
 	
 	private Method setterMethod;
     
-    public Column(String showName, String columnName, String fieldName, ColumnTypes type, boolean unique, boolean primary, boolean autoIncrement, boolean nullable, Object defaultValue, String columnDefinition, int length,
+    public Column(IColumnField field, String showName, String columnName, String fieldName, ColumnTypes type, boolean unique, boolean primary, boolean autoIncrement, boolean nullable, Object defaultValue, String columnDefinition, int length,
 			int precision, int scale, String comment) {
 		super();
 		this.showName = showName;
 		this.columnName = columnName;
 		this.fieldName = fieldName;
+		this.field = field;
 		this.type = type;
 		this.unique = unique;
 		this.primary = primary;
@@ -72,8 +75,17 @@ public abstract class Column {
     public String columnName() {
     	return columnName;
     }
+    public String columnFullName() {
+    	return getTable().name()+"."+columnName();
+    }
+    public String columnNameWithAlias() {
+    	return getTable().name()+"."+columnName()+" as "+fieldName();
+    }
     public String fieldName() {
     	return fieldName;
+    }
+    public IColumnField field() {
+    	return field;
     }
     public Method getterMethod() {
     	if(getterMethod == null)

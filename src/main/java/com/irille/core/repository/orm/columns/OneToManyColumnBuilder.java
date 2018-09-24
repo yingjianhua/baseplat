@@ -6,7 +6,6 @@ import com.irille.core.repository.orm.Entity;
 import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.orm.Table;
 
-import irille.pub.ClassTools;
 import irille.pub.Str;
 
 public class OneToManyColumnBuilder<T extends Entity> extends ColumnBuilder {
@@ -15,7 +14,7 @@ public class OneToManyColumnBuilder<T extends Entity> extends ColumnBuilder {
 
     public OneToManyColumnBuilder(Class<T> targetEntity) {
     	super();
-    	Table<?> table = (Table<?>)ClassTools.getStaticProerty(targetEntity, "table");
+    	Table<?> table = Entity.table(targetEntity);
     	Column outKey = table.primaryKey();
     	targetEntity(targetEntity);
     	type(outKey.type());
@@ -29,7 +28,7 @@ public class OneToManyColumnBuilder<T extends Entity> extends ColumnBuilder {
     	String fieldName = Str.tranLineUpperToField(field.name().indexOf("__")<0?field.name():field.name().substring(0, field.name().indexOf("__")));
     	String showName = this.showName()==null?fieldName:this.showName();
     	String comment = this.comment()==null?showName:this.comment();
-    	return new OneToManyColumn(targetEntity, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length(), precision(), scale(), comment); 
+    	return new OneToManyColumn(field, targetEntity, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length(), precision(), scale(), comment); 
     }
     
     public void targetEntity(Class<T> targetEntity) {

@@ -121,7 +121,7 @@ public class ResultMapper {
 			T entity = entityClass.newInstance();
 			for (Column column : columns) {
 				try {
-					Object value = fromResultSet(rs, column.type(), column.columnName());
+					Object value = fromResultSet(rs, column.type(), column.fieldName());
 					try {
 						if(value != null) {
 							column.setterMethod().invoke(entity, value);
@@ -223,8 +223,8 @@ public class ResultMapper {
 		try {
 			Map<String, Object> map = new HashMap<>();
 //		System.out.println("column length:"+l);
-		System.out.println("  |catalogName|tableName|schemaName|columnClassName|columnLabel|scale|columnDisplaySize|precision|columnType|columnTypeName|columnName|columnValue|"
-				+ "javaType|");
+//		System.out.println("  |catalogName|tableName|schemaName|columnClassName|columnLabel|scale|columnDisplaySize|precision|columnType|columnTypeName|columnName|columnValue|"
+//				+ "javaType|");
 //		java.sql.Types
 			ResultSetMetaData md = rs.getMetaData();
 			int l = md.getColumnCount();
@@ -255,21 +255,21 @@ public class ResultMapper {
 					default:
 						value = rs.getObject(i+1);
 					}
-				System.out.println((i+1)+""
-						+" | "+md.getCatalogName(i+1)
-						+" | "+md.getTableName(i+1) 
-						+" | "+md.getSchemaName(i+1) 
-						+" | "+md.getColumnClassName(i+1)
-						+" | "+md.getColumnLabel(i+1)
-						+" | "+md.getScale(i+1)
-						+" | "+md.getColumnDisplaySize(i+1)
-						+" | "+md.getPrecision(i+1)
-						+" | "+md.getColumnType(i+1)
-						+" | "+md.getColumnTypeName(i+1) 
-						+" | "+md.getColumnName(i+1)
-						+" | "+rs.getObject(i+1)
-						+" | "+rs.getObject(i+1).getClass().getName()
-						+" |");
+//				System.out.println((i+1)+""
+//						+" | "+md.getCatalogName(i+1)
+//						+" | "+md.getTableName(i+1) 
+//						+" | "+md.getSchemaName(i+1) 
+//						+" | "+md.getColumnClassName(i+1)
+//						+" | "+md.getColumnLabel(i+1)
+//						+" | "+md.getScale(i+1)
+//						+" | "+md.getColumnDisplaySize(i+1)
+//						+" | "+md.getPrecision(i+1)
+//						+" | "+md.getColumnType(i+1)
+//						+" | "+md.getColumnTypeName(i+1) 
+//						+" | "+md.getColumnName(i+1)
+//						+" | "+rs.getObject(i+1)
+//						+" | "+rs.getObject(i+1).getClass().getName()
+//						+" |");
 					map.put(key, value);
 				}
 			}

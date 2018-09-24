@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import com.irille.core.commons.SetBeans.SetBean.SetBeans;
-import com.irille.core.repository.orm.Column;
 import com.irille.core.repository.orm.ColumnTypes;
 import com.irille.core.repository.orm.Entity;
 import com.irille.core.repository.orm.IColumnField;
@@ -41,10 +40,6 @@ public class EntityQuery<T> extends AbstractQuery {
 	
 	public EntityQuery<?> SELECT(IColumnField... flds) {
 		sql.SELECT(flds);
-		return this;
-	}
-	public EntityQuery<?> SELECT(Predicate... predicate) {
-		sql.SELECT(predicate);
 		return this;
 	}
 	public EntityQuery<?> SELECT(IColumnField fld, String alias) {
@@ -99,21 +94,15 @@ public class EntityQuery<T> extends AbstractQuery {
 		return this;
 	}
 	public EntityQuery<T> SET(IColumnField fld, Serializable param) {
-		return SET(fld.column(), param);
-	}
-	public EntityQuery<T> SET(Column column, Serializable param) {
-		sql.SET(column, param);
+		this.sql.SET(fld, param);
 		return this;
 	}
-	public EntityQuery<T> VALUES(Column column, Serializable param) {
-		sql.VALUES(column, param);
+	public EntityQuery<T> VALUES(IColumnField field, Serializable param) {
+		sql.VALUES(field, param);
 		return this;
 	}
 	public EntityQuery<T> WHERE(IColumnField fld, String conditions, Serializable... params) {
-		return WHERE(fld.column(), conditions, params);
-	}
-	public EntityQuery<T> WHERE(Column column, String conditions, Serializable... params) {
-		sql.WHERE(column, conditions, params);
+		sql.WHERE(fld, conditions, params);
 		return this;
 	}
 	public EntityQuery<T> WHERE(boolean test, IColumnField fld, String conditions, Serializable... params) {

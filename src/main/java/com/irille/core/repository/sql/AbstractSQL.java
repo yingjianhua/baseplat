@@ -303,7 +303,7 @@ public abstract class AbstractSQL<T> {
 
   }
 
-  protected boolean isSelect() {
+  public boolean isSelect() {
   	if (sql().statementType == null) {
           return true;
         }

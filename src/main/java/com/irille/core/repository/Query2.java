@@ -6,7 +6,6 @@ import java.util.List;
 import com.irille.core.repository.orm.Entity;
 import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.query.EntityQuery;
-import com.irille.core.repository.query.Predicate;
 import com.irille.core.repository.query.SqlQuery;
 import com.irille.core.repository.sql.SQL;
 
@@ -45,10 +44,6 @@ public class Query2 {
 	public static EntityQuery<?> SELECT(IColumnField... flds) {
 		EntityQuery<?> q = new EntityQuery<>();
 		return q.SELECT(flds);
-	}
-	public static EntityQuery<?> SELECT(Predicate... predicate) {
-		EntityQuery<?> q = new EntityQuery<>();
-		return q.SELECT(predicate);
 	}
 	public static <T extends Entity> EntityQuery<T> SELECT(Class<T> beanClass) {
 		EntityQuery<?> q = new EntityQuery<>();

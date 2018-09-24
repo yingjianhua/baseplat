@@ -2,6 +2,7 @@ package com.irille.core.repository.orm.columns;
 
 import com.irille.core.repository.orm.Column;
 import com.irille.core.repository.orm.ColumnTypes;
+import com.irille.core.repository.orm.IColumnField;
 
 import irille.pub.tb.EnumLine;
 import irille.pub.tb.IEnumOpt;
@@ -10,9 +11,9 @@ public class OptColumn extends Column {
 
 	public IEnumOpt opt;
 
-	public OptColumn(IEnumOpt opt, String showName, String columnName, String fieldName, ColumnTypes type, boolean unique, boolean primary, boolean autoIncrement, boolean nullable,
+	public OptColumn(IColumnField field, IEnumOpt opt, String showName, String columnName, String fieldName, ColumnTypes type, boolean unique, boolean primary, boolean autoIncrement, boolean nullable,
 			Object defaultValue, String columnDefinition, int length, int precision, int scale, String comment) {
-		super(showName, columnName, fieldName, ColumnTypes.OPTLINE, unique, primary, autoIncrement, nullable, defaultValue, columnDefinition, length, precision, scale, comment);
+		super(field, showName, columnName, fieldName, ColumnTypes.OPTLINE, unique, primary, autoIncrement, nullable, defaultValue, columnDefinition, length, precision, scale, comment);
 		this.opt = opt;
 	}
 	public IEnumOpt opt() {

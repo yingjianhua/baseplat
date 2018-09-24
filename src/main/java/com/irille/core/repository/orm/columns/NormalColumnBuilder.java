@@ -19,7 +19,7 @@ public class NormalColumnBuilder extends ColumnBuilder {
     	String showName = this.showName()==null?fieldName:this.showName();
     	String comment = this.comment()==null?showName:this.comment();
     	int length = type()==ColumnTypes.BOOLEAN?1:this.length();
-    	return new NormalColumn(showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length, precision(), scale(), comment); 
+    	return new NormalColumn(field, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue(), columnDefinition(), length, precision(), scale(), comment); 
     }
     
 }

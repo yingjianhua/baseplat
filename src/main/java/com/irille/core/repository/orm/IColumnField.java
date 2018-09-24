@@ -11,4 +11,16 @@ public interface IColumnField {
 	default Predicate as(String alias) {
 		return new Predicate(column()).alias(alias);
 	}
+	default String columnName() {
+    	return this.column().columnName();
+    }
+	default String columnFullName() {
+    	return this.column().columnFullName();
+    }
+	default String columnNameWithAlias() {
+    	return this.column().columnNameWithAlias();
+    }
+	default String fieldName() {
+		return this.column().fieldName();
+	}
 }

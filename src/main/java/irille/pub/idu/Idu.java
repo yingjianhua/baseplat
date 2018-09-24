@@ -453,7 +453,7 @@ public abstract class Idu<T extends Idu, BEAN extends Bean> {
 	 * 明细主键的规则 = 主表主键 -> 清空后6位为0 + 序号
 	 * @param main
 	 * @param list
-	 * @param field
+	 * @param T
 	 */
 	public static final void insLineTid(BeanLong main, List list) {
 		long pkey = lineFirstPkey(main.getPkey());

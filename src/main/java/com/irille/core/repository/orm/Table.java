@@ -46,6 +46,9 @@ public class Table <T extends Entity> {
 	public String name() {
 		return name;
 	}
+	public String nameWithAlias() {
+		return name+" "+entity.getSimpleName();
+	}
 	public Index[] indexes() {
 		return Arrays.copyOf(indexes, indexes.length);
 	}

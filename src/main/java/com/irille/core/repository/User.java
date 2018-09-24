@@ -2,7 +2,6 @@ package com.irille.core.repository;
 
 
 import java.sql.SQLException;
-import java.util.Map;
 
 import com.irille.core.controller.JsonWriter;
 import com.irille.core.repository.db.ConnectionManager;
@@ -19,20 +18,46 @@ import com.irille.core.repository.orm.TableFactory;
 
 import irille.pub.tb.EnumLine;
 import irille.pub.tb.IEnumOpt;
+import irille.view.BaseView;
 
 public class User extends Entity {
 	
+	static public class UserView implements BaseView {
+		private String name2;
+		private String username2;
+		private Integer id2;
+		public String getName2() {
+			return name2;
+		}
+		public void setName2(String name2) {
+			this.name2 = name2;
+		}
+		public String getUsername2() {
+			return username2;
+		}
+		public void setUsername2(String username2) {
+			this.username2 = username2;
+		}
+		public Integer getId2() {
+			return id2;
+		}
+		public void setId2(Integer id2) {
+			this.id2 = id2;
+		}
+	}
+	
 	public static void main(String[] args) {
-		User.table.getClass();
+		System.out.println(T.PKEY);
+//		User.table.getClass();
 //		Map<String, Object> map = SELECT(User.class).queryMap();
-		Map<String, Object> map = SELECT(field.PKEY).SELECT(field.PRODUCT_NAME).FROM(User.class).queryMap();
-		JsonWriter.toConsole(map);
+//		Map<String, Object> map = SELECT(field.PKEY).SELECT(field.PRODUCT_NAME).FROM(User.class).queryMap();
+//		JsonWriter.toConsole(map);
 //		User.SELECT(User.class).queryMap();
-//		testLoad();
-//		Integer pkey = testIns();
-//		testLoad();
-//		testUpd();
-//		testLoad();
+		testLoad();
+		Integer pkey = testIns();
+		testLoad();
+		testUpd();
+		testLoad();
 //		testDel(pkey);
 //		testLoad();
 		try {
@@ -58,7 +83,9 @@ public class User extends Entity {
 		return user.getPkey();
 	}
 	public static void testLoad() {
-		JsonWriter.toConsole(User.SELECT(User.class).queryMap());
+//		JsonWriter.toConsole(User.SELECT(User.class).queryMap());
+		JsonWriter.toConsole(User.SELECT(T.NAME.as("name2"), T.USERNAME.as("username2"), T.ID.as("id2")).FROM(User.class).query(UserView.class));
+//		JsonWriter.toConsole(User.SELECT(User.class).query());
 	}
 	public static void testUpd() {
 		User user = User.SELECT(User.class).query();
@@ -69,7 +96,7 @@ public class User extends Entity {
 		SELECT(User.class, pkey).del();
 	}
 
-	public static final Table<User> table = TableFactory.entity(User.class).column(field.values()).index(true, field.ID).index(false, field.ID, field.NAME).create();
+	public static final Table<User> table = TableFactory.entity(User.class).column(T.values()).index(true, T.ID).index(false, T.ID, T.NAME).create();
 
 	public enum OptType implements IEnumOpt{
 		admin(0, "管理员"),
@@ -84,13 +111,13 @@ public class User extends Entity {
 		}
 		
 	}
-	public enum field implements IColumnField {
+	public enum T implements IColumnField {
 		PKEY(ColumnTemplate.PKEY),
 		ID(ColumnTemplate.INT__11),
 		NORMAL_BEAN(ColumnFactory.oneToMany(NormalBean.class)),
 		NAME(ColumnTemplate.STR__200.nullable(true).showName("名字").defaultValue("")),
 		TYPE(ColumnFactory.opt(OptType.anonymous).showName("用户类型")),
-		ENABLED(ColumnFactory.type(ColumnTypes.BOOLEAN)),
+		ENABLED(ColumnFactory.type(ColumnTypes.BOOLEAN).showName("是否启用")),
 		USERNAME(ColumnTemplate.STR__200.showName("用户名")),
 		PASSWORD(ColumnTemplate.STR__200.nullable(true).showName("密码")),
 		BILL_ADDR(ColumnTemplate.STR__200.nullable(true)),
@@ -100,11 +127,11 @@ public class User extends Entity {
 		;
 		private Column column;
 
-		field(IColumnTemplate template) {
+		T(IColumnTemplate template) {
 			this.column = template.builder().create(this);
 		}
 
-		field(ColumnBuilder builder) {
+		T(ColumnBuilder builder) {
 			this.column = builder.create(this);
 		}
 
@@ -124,7 +151,7 @@ public class User extends Entity {
 	// admin:0,管理员
 	// anonymous:1,匿名用户
 	// normal:2,普通用户
-	private Boolean enabled; // enabled TINYINT(1)
+	private Boolean enabled; // 是否启用 TINYINT(1)
 	private String username; // 用户名 VARCHAR(200)
 	private String password; // 密码 VARCHAR(200)<null>
 	private String billAddr; // billAddr VARCHAR(200)<null>
@@ -139,7 +166,7 @@ public class User extends Entity {
 		normalBean = null; // normalBean INT(11)
 		name = ""; // 名字 VARCHAR(200)
 		type = OptType.anonymous.getLine().getKey(); // 用户类型<OptType> TINYINT(4)
-		enabled = null; // enabled TINYINT(1)
+		enabled = null; // 是否启用 TINYINT(1)
 		username = null; // 用户名 VARCHAR(200)
 		password = null; // 密码 VARCHAR(200)
 		billAddr = null; // billAddr VARCHAR(200)

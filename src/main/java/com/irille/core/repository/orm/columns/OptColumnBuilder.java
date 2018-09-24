@@ -26,7 +26,7 @@ public class OptColumnBuilder extends ColumnBuilder {
     	if(defaultValue() != null)
     		assertTrue(opt.getClass()==defaultValue().getClass());
     	Object defaultValue = (nullable()==false&&defaultValue()==null)?opt:this.defaultValue();
-    	return new OptColumn(opt, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue, columnDefinition(), length, precision(), scale(), comment); 
+    	return new OptColumn(field, opt, showName, columnName, fieldName, type(), unique(), primary(), autoIncrement(), nullable(), defaultValue, columnDefinition(), length, precision(), scale(), comment); 
     }
     
     public OptColumnBuilder opt(IEnumOpt opt) {

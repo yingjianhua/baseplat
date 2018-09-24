@@ -21,11 +21,11 @@ public abstract class Entity extends Query2{
 	public Entity ins() {
 		Table table = Entity.table(this.getClass());
 		EntityQuery q = INSERT(this.getClass());
-		for(Column column:table.columns()) {
-			if(column.isPrimary())
+		for(IColumnField field:Entity.fields(this.getClass())) {
+			if(field.column().isPrimary())
 				continue;
 			try {
-				q.VALUES(column, (Serializable)column.getterMethod().invoke(this));
+				q.VALUES(field, (Serializable)field.column().getterMethod().invoke(this));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
 			}
@@ -39,13 +39,12 @@ public abstract class Entity extends Query2{
 		return  this;
 	}
 	public Entity upd() {
-		Table table = Entity.table(this.getClass());
 		EntityQuery q = UPDATE(this.getClass());
-		for(Column column:table.columns()) {
-			if(column.isPrimary())
+		for(IColumnField field:Entity.fields(this.getClass())) {
+			if(field.column().isPrimary())
 				continue;
 			try {
-				q.SET(column, (Serializable)column.getterMethod().invoke(this));
+				q.SET(field, (Serializable)field.column().getterMethod().invoke(this));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
 			}
@@ -62,7 +61,7 @@ public abstract class Entity extends Query2{
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
 		}
-		int row = DELETE(this.getClass()).WHERE(column, "=?", primaryKeyValue).executeUpdate();
+		int row = DELETE(this.getClass()).WHERE(column.field(), "=?", primaryKeyValue).executeUpdate();
 		if(row == 0)
 			throw  LOG.err("deleteNotFound", "删除表【{0}】主键为【{1}】的记录不存在!", table.name(), primaryKeyValue);
 	}
@@ -70,12 +69,12 @@ public abstract class Entity extends Query2{
 	@Test
 	public void testCreateTableIfNotExists() {
 		try {
-			Table<?> table = (Table<?>)this.getClass().getField("table").get(null);
+			Table<?> table = this.table();
 			table.drop(false);
 			table.create();
 			ConnectionManager.commitConnection();
 			new EntitySrc(this).outSrc();
-		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | SQLException e) {
+		} catch (IllegalArgumentException | SecurityException | SQLException e) {
 			e.printStackTrace();
 		}
 	}
@@ -93,6 +92,15 @@ public abstract class Entity extends Query2{
 			return (Table<?>)entityClass.getField("table").get(null);
 		} catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
 			logger.error("实体[{}]没有table属性", entityClass.getName());
+			return null;
+		}
+	}
+	public static <T extends Entity> IColumnField[] fields(Class<T> entityClass) {
+		try {
+			IColumnField[] fields = (IColumnField[])Class.forName(entityClass.getName()+"$T").getEnumConstants();
+			return fields;
+		} catch (IllegalArgumentException | SecurityException | ClassNotFoundException e) {
+			logger.error("实体[{}]没有定义field枚举类", entityClass.getName());
 			return null;
 		}
 	}
