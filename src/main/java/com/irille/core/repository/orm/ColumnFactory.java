@@ -2,7 +2,7 @@ package com.irille.core.repository.orm;
 
 import com.irille.core.repository.orm.columns.I18NColumnBuilder;
 import com.irille.core.repository.orm.columns.NormalColumnBuilder;
-import com.irille.core.repository.orm.columns.OneToManyColumnBuilder;
+import com.irille.core.repository.orm.columns.ManyToOneColumnBuilder;
 import com.irille.core.repository.orm.columns.OptColumnBuilder;
 
 import irille.pub.tb.IEnumOpt;
@@ -13,8 +13,8 @@ public class ColumnFactory {
 		return new NormalColumnBuilder(type);
 	}
 	
-	public static <T extends Entity> OneToManyColumnBuilder<T> oneToMany(Class<T> entityClass) {
-		return new OneToManyColumnBuilder<T>(entityClass);
+	public static <T extends Entity> ManyToOneColumnBuilder<T> manyToOne(Class<T> entityClass) {
+		return new ManyToOneColumnBuilder<T>(entityClass);
 	}
 	
 	public static <T extends Entity> OptColumnBuilder opt(IEnumOpt opt) {
@@ -51,8 +51,8 @@ public class ColumnFactory {
 				precision(builder.precision());
 				scale(builder.scale());
 			}};
-		} else if(builder instanceof OneToManyColumnBuilder) {
-			return new OneToManyColumnBuilder(((OneToManyColumnBuilder)builder).targetEntity()) {{
+		} else if(builder instanceof ManyToOneColumnBuilder) {
+			return new ManyToOneColumnBuilder(((ManyToOneColumnBuilder)builder).targetEntity()) {{
 				showName(builder.showName());
 				defaultValue(builder.defaultValue());
 				unique(builder.unique());

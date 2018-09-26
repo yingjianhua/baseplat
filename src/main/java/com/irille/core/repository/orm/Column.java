@@ -4,7 +4,7 @@ import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.MessageFormat;
 
-import com.irille.core.repository.orm.columns.OneToManyColumn;
+import com.irille.core.repository.orm.columns.ManyToOneColumn;
 import com.irille.core.repository.orm.columns.OptColumn;
 
 import irille.pub.tb.EnumLine;
@@ -76,10 +76,10 @@ public abstract class Column {
     	return columnName;
     }
     public String columnFullName() {
-    	return getTable().name()+"."+columnName();
+    	return getTable().entity().getSimpleName()+"."+columnName();
     }
     public String columnNameWithAlias() {
-    	return getTable().name()+"."+columnName()+" as "+fieldName();
+    	return getTable().entity().getSimpleName()+"."+columnName()+" as "+fieldName();
     }
     public String fieldName() {
     	return fieldName;
@@ -172,9 +172,9 @@ public abstract class Column {
 			for(EnumLine line:optColumn.opt.getLine().getLines()) {
 				remark+=TAB+"// " + line.getVarName() + ":" + line.getKey()+","+line.getName()+LN;
 			}
-		} else if(this instanceof OneToManyColumn) {
-			OneToManyColumn oneToManyColumn = (OneToManyColumn)this;
-			specialColumn = "<表主键:"+oneToManyColumn.targetEntity().getSimpleName()+">";
+		} else if(this instanceof ManyToOneColumn) {
+			ManyToOneColumn manyToOneColumn = (ManyToOneColumn)this;
+			specialColumn = "<表主键:"+manyToOneColumn.targetEntity().getSimpleName()+">";
 		}
 		return new MessageFormat(type.getFieldCommentTemplate()).format(new String[] {type.javaClass.getSimpleName(), fieldName(), showName(), specialColumn, type.sqlType(), getLength()+"", isNull, remark});
 	}
@@ -225,6 +225,8 @@ public abstract class Column {
 			if(defaultValue instanceof IEnumOpt) {
 				IEnumOpt o = (IEnumOpt)defaultValue;
 				s.append(o.getLine().getKey());
+			} else if(defaultValue instanceof Boolean) {
+				s.append((Boolean)defaultValue?1:0);
 			} else {
 				s.append(defaultValue.toString());
 			}

@@ -6,7 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Page<T extends BaseView> {
+public class Page<T> {
 	public static final String PAGE_TOTALCOUNT = "totalCount";
 	public static final String PAGE_TOTALPAGE = "totalPage";
 	public static final String PAGE_CURRENTPAGE = "currentPage";

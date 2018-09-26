@@ -69,13 +69,13 @@ public class EntitySQL {
   }
   
   public <T extends Entity> EntitySQL LEFT_JOIN(Class<T> entityClass, IColumnField fld1, IColumnField fld2) {
-	  return mybatisSQL.LEFT_OUTER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+fld1.columnNameWithAlias()+"="+fld2.columnNameWithAlias());
+	  return mybatisSQL.LEFT_OUTER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+fld1.columnFullName()+"="+fld2.columnFullName());
   }
   public <T extends Entity> EntitySQL INNER_JOIN(Class<T> entityClass, IColumnField fld1, IColumnField fld2) {
-	  return mybatisSQL.INNER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+fld1.columnNameWithAlias()+"="+fld2.columnNameWithAlias());
+	  return mybatisSQL.INNER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+fld1.columnFullName()+"="+fld2.columnFullName());
   }
   public <T extends Entity> EntitySQL WHERE(IColumnField fld, String conditions) {
-	return mybatisSQL.WHERE((mybatisSQL.isSelect()?fld.columnNameWithAlias():fld.columnName())+" "+conditions);
+	return mybatisSQL.WHERE((mybatisSQL.isSelect()?fld.columnFullName():fld.columnName())+" "+conditions);
   }
   public <T extends Entity> EntitySQL WHERE(IColumnField fld, String conditions, Serializable... params) {
 	  WHERE(fld, conditions);
@@ -104,11 +104,11 @@ public class EntitySQL {
   }
   
   public <T extends Entity> EntitySQL ORDER_BY(IColumnField fld, String type) {
-	  return mybatisSQL.ORDER_BY(fld.columnNameWithAlias()+" "+type);
+	  return mybatisSQL.ORDER_BY(fld.columnFullName()+" "+type);
   }
   
   public <T extends Entity> EntitySQL GROUP_BY(IColumnField fld) {
-	  return mybatisSQL.GROUP_BY(fld.columnNameWithAlias());
+	  return mybatisSQL.GROUP_BY(fld.columnFullName());
   }
   
   public <T extends Entity> EntitySQL LIMIT(int start, int limit) {
@@ -134,6 +134,12 @@ public class EntitySQL {
   public String JSON_UNQUOTE(IColumnField fld, String key) {
 	  return "JSON_UNQUOTE(JSON_EXTRACT("+fld.columnFullName()+", \"$."+key+"\")) as "+fld.fieldName();
   }
+  public int getStart() {
+	  return mybatisSQL.getStart();
+  }
+  public int getLimit() {
+	  return mybatisSQL.getLimit();
+  }
   
   
   @Override
@@ -152,6 +158,14 @@ public class EntitySQL {
 		return EntitySQL.this;
 	}
 	
+	public int getStart() {
+		return start;
+	}
+
+	public int getLimit() {
+		return limit;
+	}
+
 	public <T extends Entity> EntitySQL LIMIT(int start, int limit) {
 		this.start = start;
 		this.limit = limit;

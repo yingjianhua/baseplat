@@ -1,10 +1,11 @@
 package com.irille.core.repository;
 
 
-import java.sql.SQLException;
+import java.util.Locale;
 
-import com.irille.core.controller.JsonWriter;
-import com.irille.core.repository.db.ConnectionManager;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import com.irille.core.repository.orm.Column;
 import com.irille.core.repository.orm.ColumnBuilder;
 import com.irille.core.repository.orm.ColumnFactory;
@@ -15,8 +16,10 @@ import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.orm.IColumnTemplate;
 import com.irille.core.repository.orm.Table;
 import com.irille.core.repository.orm.TableFactory;
+import com.irille.core.repository.orm.columns.I18NColumn;
 
 import irille.pub.tb.EnumLine;
+import irille.pub.tb.FldLanguage;
 import irille.pub.tb.IEnumOpt;
 import irille.view.BaseView;
 
@@ -45,56 +48,6 @@ public class User extends Entity {
 			this.id2 = id2;
 		}
 	}
-	
-	public static void main(String[] args) {
-		System.out.println(T.PKEY);
-//		User.table.getClass();
-//		Map<String, Object> map = SELECT(User.class).queryMap();
-//		Map<String, Object> map = SELECT(field.PKEY).SELECT(field.PRODUCT_NAME).FROM(User.class).queryMap();
-//		JsonWriter.toConsole(map);
-//		User.SELECT(User.class).queryMap();
-		testLoad();
-		Integer pkey = testIns();
-		testLoad();
-		testUpd();
-		testLoad();
-//		testDel(pkey);
-//		testLoad();
-		try {
-			ConnectionManager.commitConnection();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	public static Integer testIns() {
-		User user = new User();
-		user.setId(2);
-		user.setNormalBean(1);
-		user.setName("名字");
-		user.stType(OptType.admin);
-		user.setEnabled(true);
-		user.setUsername("用户名");
-		user.setPassword("密码");
-		user.setBillAddr("zhangdandizhi");
-		user.setEmail("a86291151@163.com");
-		user.setProductName("{}");
-		user.setIsValid(true);
-		user.ins();
-		return user.getPkey();
-	}
-	public static void testLoad() {
-//		JsonWriter.toConsole(User.SELECT(User.class).queryMap());
-		JsonWriter.toConsole(User.SELECT(T.NAME.as("name2"), T.USERNAME.as("username2"), T.ID.as("id2")).FROM(User.class).query(UserView.class));
-//		JsonWriter.toConsole(User.SELECT(User.class).query());
-	}
-	public static void testUpd() {
-		User user = User.SELECT(User.class).query();
-		user.setName("新名字");
-		user.upd();
-	}
-	public static void testDel(Integer pkey) {
-		SELECT(User.class, pkey).del();
-	}
 
 	public static final Table<User> table = TableFactory.entity(User.class).column(T.values()).index(true, T.ID).index(false, T.ID, T.NAME).create();
 
@@ -114,7 +67,7 @@ public class User extends Entity {
 	public enum T implements IColumnField {
 		PKEY(ColumnTemplate.PKEY),
 		ID(ColumnTemplate.INT__11),
-		NORMAL_BEAN(ColumnFactory.oneToMany(NormalBean.class)),
+		NORMAL_BEAN(ColumnFactory.manyToOne(NormalBean.class)),
 		NAME(ColumnTemplate.STR__200.nullable(true).showName("名字").defaultValue("")),
 		TYPE(ColumnFactory.opt(OptType.anonymous).showName("用户类型")),
 		ENABLED(ColumnFactory.type(ColumnTypes.BOOLEAN).showName("是否启用")),
@@ -123,7 +76,7 @@ public class User extends Entity {
 		BILL_ADDR(ColumnTemplate.STR__200.nullable(true)),
 		EMAIL(ColumnTemplate.EMAIL),
 		PRODUCT_NAME(ColumnTemplate.I18N),
-		IS_VALID(ColumnTemplate.BOOLEAN.showName("是否合法"))
+		IS_VALID(ColumnTemplate.BOOLEAN.defaultValue(true).showName("是否合法"))
 		;
 		private Column column;
 
@@ -155,7 +108,7 @@ public class User extends Entity {
 	private String username; // 用户名 VARCHAR(200)
 	private String password; // 密码 VARCHAR(200)<null>
 	private String billAddr; // billAddr VARCHAR(200)<null>
-	private String email; // 邮箱地址 VARCHAR(100)<null>
+	private String email; // 邮件 VARCHAR(50)<null>
 	private String productName; // productName JSON(0)
 	private Boolean isValid; // 是否合法 TINYINT(1)
 
@@ -170,9 +123,9 @@ public class User extends Entity {
 		username = null; // 用户名 VARCHAR(200)
 		password = null; // 密码 VARCHAR(200)
 		billAddr = null; // billAddr VARCHAR(200)
-		email = null; // 邮箱地址 VARCHAR(100)
+		email = null; // 邮件 VARCHAR(50)
 		productName = null; // productName JSON(0)
-		isValid = null; // 是否合法 TINYINT(1)
+		isValid = true; // 是否合法 TINYINT(1)
 		return this;
 	}
 
@@ -254,6 +207,18 @@ public class User extends Entity {
 	}
 	public void setProductName(String productName) {
 		this.productName = productName;
+	}
+	public String getProductName(Locale locale) throws JSONException {
+		return gtProductName().has(locale.getLanguage())?gtProductName().getString(locale.getLanguage()):"";
+	}
+	public void setProductName(String productName, Locale locale) throws JSONException {
+		stProductName(gtProductName().put(locale.getLanguage(), productName));
+	}
+	public JSONObject gtProductName() throws JSONException {
+		return (getProductName()==null?new JSONObject():new JSONObject(getProductName()));
+	}
+	public void stProductName(JSONObject productName) {
+		this.setProductName(productName==null?null:productName.toString());
 	}
 	public Boolean getIsValid() {
 		return isValid;

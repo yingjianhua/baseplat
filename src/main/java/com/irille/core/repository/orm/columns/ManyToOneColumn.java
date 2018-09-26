@@ -8,11 +8,11 @@ import com.irille.core.repository.orm.Table;
 
 import irille.pub.ClassTools;
 
-public class OneToManyColumn<T extends Entity> extends Column {
+public class ManyToOneColumn<T extends Entity> extends Column {
 
 	private Class<T> targetEntity;
 
-	public OneToManyColumn(IColumnField field, Class<T> targetEntity, String showName, String columnName, String fieldName, ColumnTypes type, boolean unique, boolean primary, boolean autoIncrement, boolean nullable,
+	public ManyToOneColumn(IColumnField field, Class<T> targetEntity, String showName, String columnName, String fieldName, ColumnTypes type, boolean unique, boolean primary, boolean autoIncrement, boolean nullable,
 			Object defaultValue, String columnDefinition, int length, int precision, int scale, String comment) {
 		super(field, showName, columnName, fieldName, type, unique, primary, autoIncrement, nullable, defaultValue, columnDefinition, length, precision, scale, comment);
 		this.targetEntity = targetEntity;

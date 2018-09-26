@@ -15,6 +15,7 @@ import com.irille.core.repository.sql.I18NEntitySQL;
 import irille.pub.Log;
 import irille.pub.tb.FldLanguage.Language;
 import irille.view.BaseView;
+import irille.view.Page;
 
 public class EntityQuery<T> extends AbstractQuery {
 	public static final Log LOG = new Log(EntityQuery.class);
@@ -161,6 +162,18 @@ public class EntityQuery<T> extends AbstractQuery {
 		}
 	}
 	@SuppressWarnings("unchecked")
+	public <R extends Object> Page<R> queryPage(Class<R> resultClass) {
+		List<R> items = null;
+		if(Entity.class.isAssignableFrom(resultClass)) {
+			items = (List<R>)queryEntitys((Class<Entity>)resultClass);
+		} else if(BaseView.class.isAssignableFrom(resultClass)){
+			items = SetBeans.setList(queryMaps(), resultClass);
+		} else {
+			items = super.queryObjects(resultClass);
+		}
+		return new Page<>(items, this.sql.getStart(), this.sql.getLimit(), queryCount());
+	}
+	@SuppressWarnings("unchecked")
 	public T query() {
 		if(Entity.class.isAssignableFrom(this.entityClass)) {
 			return (T) this.queryEntity((Class<Entity>)entityClass);
@@ -176,14 +189,16 @@ public class EntityQuery<T> extends AbstractQuery {
 			return null;
 		}
 	}
-//	@Deprecated
-//	public <R extends Object> R queryObject(Class<R> resultClass) {
-//		return super.queryObject(resultClass);
-//	}
-//	@Deprecated
-//	public <R extends Object> List<R> queryObjects(Class<R> resultClass) {
-//		return super.queryObjects(resultClass);
-//	}
+	@SuppressWarnings("unchecked")
+	public Page<T> queryPage() {
+		List<T> items = null;
+		if(Entity.class.isAssignableFrom(this.entityClass)) {
+			items = (List<T>) this.queryEntitys((Class<Entity>)entityClass);
+		} else{
+			return null;
+		}
+		return new Page<>(items, this.sql.getStart(), this.sql.getLimit(), queryCount());
+	}
 	public Map<String, Object> queryMap() {
 		return super.queryMap();
 	}
@@ -192,6 +207,9 @@ public class EntityQuery<T> extends AbstractQuery {
 	}
 	public Integer queryCount() {
 		return countRecord();
+	}
+	public boolean exists() {
+		return countRecord()>0;
 	}
 	public int executeUpdate() {
 		return super.executeUpdate();
