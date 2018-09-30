@@ -178,6 +178,9 @@ public class BeanQuery<T> extends AbstractQuery {
 	public Integer queryCount() {
 		return countRecord();
 	}
+	public Integer queryTotal() {
+		return countTotal();
+	}
 	public int executeUpdate() {
 		return super.executeUpdate();
 	}

@@ -21,6 +21,7 @@ public class TestUser extends Query2 {
 	}
 
 	@Test
+	@A
 	public void test() throws JSONException {
 		Integer pkey = testIns();
 		testLoad(pkey);
@@ -31,13 +32,11 @@ public class TestUser extends Query2 {
 		testLoad(pkey);
 		// ConnectionManager.commitConnection();
 	}
-	@A
 	public static void main(String[] args) {
 		System.out.println(1);
 	}
 
 	@Transcation
-	@A
 	public Integer testIns() {
 		User user = new User();
 		user.setId(999);

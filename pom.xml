@@ -14,7 +14,6 @@
 	<url>http://www.example.com</url>
 
 	<properties>
-
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -27,10 +26,11 @@
 		<struts2.version>2.3.1</struts2.version>
 		<json-lib.version>2.4</json-lib.version>
 		<slf4j.version>1.7.25</slf4j.version>
-		<aspectj.version>1.9.1</aspectj.version>
+		<aspectj.runtime.version>1.9.1</aspectj.runtime.version>
 	</properties>
 
 	<dependencies>
+
 		<dependency>
 			<groupId>com.irille.test</groupId>
 			<artifactId>aop</artifactId>
@@ -179,19 +179,19 @@
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjweaver</artifactId>
-			<version>${aspectj.version}</version>
+			<version>${aspectj.runtime.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjrt -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjrt</artifactId>
-			<version>${aspectj.version}</version>
+			<version>${aspectj.runtime.version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.aspectj/aspectjtools -->
 		<dependency>
 			<groupId>org.aspectj</groupId>
 			<artifactId>aspectjtools</artifactId>
-			<version>${aspectj.version}</version>
+			<version>${aspectj.runtime.version}</version>
 		</dependency>
 
 		<dependency>
@@ -246,6 +246,16 @@
 							<include>**/*.java</include>
 							<include>**/*.aj</include>
 						</includes>
+						<aspectDirectory>src/main/aspect</aspectDirectory>
+						<testAspectDirectory>src/test/aspect</testAspectDirectory>
+						<XaddSerialVersionUID>true</XaddSerialVersionUID>
+						<showWeaveInfo>true</showWeaveInfo>
+						<aspectLibraries>
+							<aspectLibrary>
+								<groupId>com.irille.test</groupId>
+								<artifactId>aop</artifactId>
+							</aspectLibrary>
+						</aspectLibraries>
 					</configuration>
 					<executions>
 						<execution>
@@ -265,12 +275,12 @@
 						<dependency>
 							<groupId>org.aspectj</groupId>
 							<artifactId>aspectjrt</artifactId>
-							<version>${aspectj.version}</version>
+							<version>${aspectj.runtime.version}</version>
 						</dependency>
 						<dependency>
 							<groupId>org.aspectj</groupId>
 							<artifactId>aspectjtools</artifactId>
-							<version>${aspectj.version}</version>
+							<version>${aspectj.runtime.version}</version>
 						</dependency>
 					</dependencies>
 				</plugin>

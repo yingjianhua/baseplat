@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.irille.core.web.config.AppConfig;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class ConnectionManager {
@@ -13,7 +14,7 @@ public class ConnectionManager {
 	
 	private static final ThreadLocal<Connection> current_thread_connection = new ThreadLocal<>();
 
-    static ComboPooledDataSource dataSource = new ComboPooledDataSource();
+    static ComboPooledDataSource dataSource = new ComboPooledDataSource(AppConfig.db_config);
 
 	public static void main(String[] args) {
 		

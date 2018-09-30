@@ -368,6 +368,7 @@ public class Sys extends PackageBase {
 		WEBSITE__NULL(STR__200_NULL,"网址"),
 		URL__NULL(WEBSITE__NULL,"URL"),
 		EMAIL__NULL(STR__100_NULL,"邮箱"),
+		EMAIL__100(STR__100,"邮箱"),
 		IP__NULL(STR__20_NULL,"IP地址",30),
 		SHORTKEY__NULL(STR__40_NULL,"快捷键"),
 		PHOTO__NULL(STR__200_NULL,"图片"), //XXX 以后要处理

@@ -8,7 +8,7 @@ import irille.view.BaseView;
 public interface Writeable {
 	
 	public static final byte RET_CODE_SUCCESS = 1;//成功
-	public static final byte RET_CODE_FAiLURE = 0;//失败
+	public static final byte RET_CODE_FAILURE = 0;//失败
 	public static final byte RET_CODE_TIMEOUT = -1;//失败
 	
 	/**
@@ -22,7 +22,7 @@ public interface Writeable {
 		writeAsJson(code, msg, null);
 	}
 	default void writeErr(String msg) throws IOException {
-		writeAsJson(RET_CODE_FAiLURE, msg, null);
+		writeAsJson(RET_CODE_FAILURE, msg, null);
 	}
 	default void write() throws IOException {
 		writeAsJson(RET_CODE_SUCCESS, null, null);

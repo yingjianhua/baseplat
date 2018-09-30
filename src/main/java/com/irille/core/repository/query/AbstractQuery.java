@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.irille.core.repository.db.ConnectionManager;
 import com.irille.core.repository.orm.ColumnTypes;
 import com.irille.core.repository.orm.Entity;
+import com.irille.core.web.config.AppConfig;
 
 import irille.pub.Log;
 import irille.pub.bean.Bean;
@@ -74,6 +75,20 @@ public abstract class AbstractQuery {
 	 * @author yingjianhua
 	 */
 	protected Integer countRecord() {
+		String sql = getSql();
+		int s = sql.indexOf(" LIMIT");
+		if(s!=-1)
+			sql = sql.substring(0, s);
+		sql = sql.replaceFirst("(select|SELECT)\\s+.*\\s+(FROM|from)", "SELECT COUNT(1) FROM");
+		return query(rs->ResultMapper.asObject(rs, Integer.class), needDebug(), sql, getParams());
+	}
+	/**
+	 * 统计记录数
+	 * 
+	 * @return
+	 * @author yingjianhua
+	 */
+	protected Integer countTotal() {
 		String sql = getSql();
 		int s = sql.indexOf(" LIMIT");
 		if(s!=-1)
@@ -157,6 +172,7 @@ public abstract class AbstractQuery {
 		ResultSet rs = null;
 		try {
 			stmt = ConnectionManager.getConnection().prepareStatement(sql);
+			stmt.setFetchSize(AppConfig.query_fetchsize);
 			stmt.setFetchSize(BeanBase.FETCH_SIZE);
 			BeanBase.toPreparedStatementData(stmt, 1, params);
 			rs = stmt.executeQuery();
@@ -175,6 +191,7 @@ public abstract class AbstractQuery {
 		ResultSet rs = null;
 		try {
 			stmt = ConnectionManager.getConnection().prepareStatement(getSql());
+			stmt.setFetchSize(AppConfig.query_fetchsize);
 			stmt.setFetchSize(BeanBase.FETCH_SIZE);
 			BeanBase.toPreparedStatementData(stmt, 1, getParams());
 			rs = stmt.executeQuery();
