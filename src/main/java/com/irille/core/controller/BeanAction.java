@@ -13,11 +13,18 @@ public abstract class BeanAction<T extends BeanMain<?, ?>, R extends Serializabl
 	}
 	private Class<T> beanClass;
 	
+	private R id;
 	private R pkey;
 	private T bean = null;
 	
 	public final Class<T> beanClazz(){
 		return beanClass;
+	}
+	public final R getId() {
+		return id;
+	}
+	public final void setId(R id) {
+		this.id = id;
 	}
 	public final R getPkey() {
 		return pkey;

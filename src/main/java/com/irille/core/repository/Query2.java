@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.irille.core.repository.orm.Entity;
-import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.query.EntityQuery;
+import com.irille.core.repository.query.IPredicate;
 import com.irille.core.repository.query.SqlQuery;
 import com.irille.core.repository.sql.SQL;
 
@@ -41,9 +41,9 @@ public class Query2 {
 	public static SqlQuery sql(SQL sql) {
 		return new SqlQuery(sql.toString(), sql.PARAMS().toArray(new Serializable[sql.PARAMS().size()]));
 	}
-	public static EntityQuery<?> SELECT(IColumnField... flds) {
+	public static EntityQuery<?> SELECT(IPredicate... predicates) {
 		EntityQuery<?> q = new EntityQuery<>();
-		return q.SELECT(flds);
+		return q.SELECT(predicates);
 	}
 	public static <T extends Entity> EntityQuery<T> SELECT(Class<T> beanClass) {
 		EntityQuery<?> q = new EntityQuery<>();
@@ -64,9 +64,9 @@ public class Query2 {
 		return new EntityQuery<>().INSERT(beanClass);
 	}
 	
-	public static EntityQuery<?> SELECT(Language lang, IColumnField... flds) {
+	public static EntityQuery<?> SELECT(Language lang, IPredicate... predicates) {
 		EntityQuery<?> q = new EntityQuery<>(lang);
-		return q.SELECT(flds);
+		return q.SELECT(predicates);
 	}
 	public static <T extends Entity> EntityQuery<T> SELECT(Class<T> beanClass, Language lang) {
 		EntityQuery<?> q = new EntityQuery<>(lang);

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 import com.irille.core.repository.orm.Entity;
-import com.irille.core.repository.orm.IColumnField;
+import com.irille.core.repository.query.IPredicate;
 
 import irille.pub.tb.IEnumOpt;
 
@@ -28,8 +28,8 @@ public class EntitySQL {
   public <T extends Entity> EntitySQL UPDATE(Class<T> entityClass) {
 	  return mybatisSQL.UPDATE(Entity.table(entityClass).name());
   }
-  public <T extends Entity> EntitySQL SET(IColumnField field, Serializable param) {
-	  mybatisSQL.SET(field.columnName()+"=?");
+  public <T extends Entity> EntitySQL SET(IPredicate predicate, Serializable param) {
+	  mybatisSQL.SET(predicate.columnName()+"=?");
 	  if(param instanceof IEnumOpt) {
 		  IEnumOpt opt = (IEnumOpt)param;
 		  mybatisSQL.PARAM(opt.getLine().getKey());
@@ -41,14 +41,19 @@ public class EntitySQL {
   public <T extends Entity> EntitySQL INSERT_INTO(Class<T> entityClass) {
 	  return mybatisSQL.INSERT_INTO(Entity.table(entityClass).name());
   }
-  public <T extends Entity> EntitySQL VALUES(IColumnField field, Serializable param) {
-	  mybatisSQL.VALUES(field.columnName(), "?");
-	  if(param instanceof IEnumOpt) {
-		  IEnumOpt opt = (IEnumOpt)param;
+  public <T extends Entity> EntitySQL VALUES(IPredicate predicate) {
+	  mybatisSQL.VALUES(predicate.columnName(), "?");
+	  if(predicate.getParams()[0] instanceof IEnumOpt) {
+		  IEnumOpt opt = (IEnumOpt)predicate.getParams()[0];
 		  mybatisSQL.PARAM(opt.getLine().getKey());
 	  } else {
-		  mybatisSQL.PARAM(param);
+		  mybatisSQL.PARAM(predicate.getParams()[0]);
 	  }
+	  return mybatisSQL.getSelf();
+  }
+  public <T extends Entity> EntitySQL VALUES(IPredicate... predicates) {
+	  for (IPredicate predicate : predicates)
+		  VALUES(predicate);
 	  return mybatisSQL.getSelf();
   }
   public <T extends Entity> EntitySQL SELECT(Class<T> entityClass) {
@@ -57,28 +62,38 @@ public class EntitySQL {
   public EntitySQL SELECT(String... columns) {
 	  return mybatisSQL.SELECT(columns);
   }
-  public EntitySQL SELECT(IColumnField fld, String alias) {
-	  return mybatisSQL.SELECT(fld.columnFullName()+" as "+alias);
+  public EntitySQL SELECT(IPredicate... predicates) {
+	  return mybatisSQL.SELECT(Stream.of(predicates).map(predicate->predicate.columnNameWithAlias()).toArray(String[]::new));
   }
-  public EntitySQL SELECT(IColumnField... flds) {
-	  return mybatisSQL.SELECT(Stream.of(flds).map(fld->fld.columnNameWithAlias()).toArray(String[]::new));
-  }
-  
   public <T extends Entity> EntitySQL FROM(Class<T> entityClass) {
 	  return mybatisSQL.FROM(Entity.table(entityClass).nameWithAlias());
   }
   
-  public <T extends Entity> EntitySQL LEFT_JOIN(Class<T> entityClass, IColumnField fld1, IColumnField fld2) {
-	  return mybatisSQL.LEFT_OUTER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+fld1.columnFullName()+"="+fld2.columnFullName());
+  public <T extends Entity> EntitySQL LEFT_JOIN(Class<T> entityClass, IPredicate predicate1, IPredicate predicate2) {
+	  return mybatisSQL.LEFT_OUTER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+predicate1.columnFullName()+"="+predicate2.columnFullName());
   }
-  public <T extends Entity> EntitySQL INNER_JOIN(Class<T> entityClass, IColumnField fld1, IColumnField fld2) {
-	  return mybatisSQL.INNER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+fld1.columnFullName()+"="+fld2.columnFullName());
+  public <T extends Entity> EntitySQL INNER_JOIN(Class<T> entityClass, IPredicate predicate1, IPredicate predicate2) {
+	  return mybatisSQL.INNER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+predicate1.columnFullName()+"="+predicate2.columnFullName());
   }
-  public <T extends Entity> EntitySQL WHERE(IColumnField fld, String conditions) {
-	return mybatisSQL.WHERE((mybatisSQL.isSelect()?fld.columnFullName():fld.columnName())+" "+conditions);
+  public <T extends Entity> EntitySQL WHERE(IPredicate... predicates) {
+	  for (IPredicate predicate : predicates) {
+		  mybatisSQL.WHERE((mybatisSQL.isSelect()?predicate.columnFullName():predicate.columnName())+" "+predicate.getConditions());
+		  for(Serializable param:predicate.getParams()) {
+			  if(param instanceof IEnumOpt) {
+				  IEnumOpt opt = (IEnumOpt)param;
+				  mybatisSQL.PARAM(opt.getLine().getKey());
+			  } else {
+				  mybatisSQL.PARAM(param);
+			  }
+		  }
+	  }
+	  return mybatisSQL.getSelf();
   }
-  public <T extends Entity> EntitySQL WHERE(IColumnField fld, String conditions, Serializable... params) {
-	  WHERE(fld, conditions);
+  public <T extends Entity> EntitySQL WHERE(IPredicate predicate, String conditions) {
+	return mybatisSQL.WHERE((mybatisSQL.isSelect()?predicate.columnFullName():predicate.columnName())+" "+conditions);
+  }
+  public <T extends Entity> EntitySQL WHERE(IPredicate predicate, String conditions, Serializable... params) {
+	  WHERE(predicate, conditions);
 	  for(Serializable param:params) {
 		  if(param instanceof IEnumOpt) {
 			  IEnumOpt opt = (IEnumOpt)param;
@@ -102,13 +117,24 @@ public class EntitySQL {
 	  }
 	  return mybatisSQL.getSelf();
   }
-  
-  public <T extends Entity> EntitySQL ORDER_BY(IColumnField fld, String type) {
-	  return mybatisSQL.ORDER_BY(fld.columnFullName()+" "+type);
+  public <T extends Entity> EntitySQL OR() {
+	  return mybatisSQL.OR();
   }
-  
-  public <T extends Entity> EntitySQL GROUP_BY(IColumnField fld) {
-	  return mybatisSQL.GROUP_BY(fld.columnFullName());
+  public <T extends Entity> EntitySQL ORDER_BY(IPredicate predicate) {
+	  return mybatisSQL.ORDER_BY(predicate.columnFullName()+" "+predicate.getConditions());
+  }
+  public <T extends Entity> EntitySQL ORDER_BY(IPredicate... predicates) {
+	  for (IPredicate predicate : predicates)
+		  ORDER_BY(predicate);
+	  return mybatisSQL.getSelf();
+  }
+  public <T extends Entity> EntitySQL GROUP_BY(IPredicate predicate) {
+	  return mybatisSQL.GROUP_BY(predicate.columnFullName());
+  }
+  public <T extends Entity> EntitySQL GROUP_BY(IPredicate... predicates) {
+	  for (IPredicate predicate : predicates)
+		GROUP_BY(predicate);
+	  return mybatisSQL.getSelf();
   }
   
   public <T extends Entity> EntitySQL LIMIT(int start, int limit) {
@@ -127,12 +153,12 @@ public class EntitySQL {
 	  return mybatisSQL.PARAMS();
   }
   
-  public String JSON_EXTRACT(IColumnField fld, String key) {
-	  //return mybatisSQL.columnLabelWithAlias(fld)+"->"+key+" as "+mybatisSQL.fld.columnName();//老版本mysql不支持的语法
-	  return "JSON_EXTRACT("+fld.columnFullName()+", \"$."+key+"\") as "+fld.fieldName();
+  public String JSON_EXTRACT(IPredicate predicate, String key) {
+	  //return mybatisSQL.columnLabelWithAlias(predicate)+"->"+key+" as "+mybatisSQL.predicate.columnName();//老版本mysql不支持的语法
+	  return "JSON_EXTRACT("+predicate.columnFullName()+", \"$."+key+"\") as "+predicate.alias();
   }
-  public String JSON_UNQUOTE(IColumnField fld, String key) {
-	  return "JSON_UNQUOTE(JSON_EXTRACT("+fld.columnFullName()+", \"$."+key+"\")) as "+fld.fieldName();
+  public String JSON_UNQUOTE(IPredicate predicate, String key) {
+	  return "JSON_UNQUOTE(JSON_EXTRACT("+predicate.columnFullName()+", \"$."+key+"\")) as "+predicate.alias();
   }
   public int getStart() {
 	  return mybatisSQL.getStart();

@@ -9,14 +9,6 @@ public class TimeoutException extends WebException {
 	public TimeoutException() {
 		super();
 	}
-
-	public TimeoutException(Throwable cause, String message) {
-		super(message, cause);
-	}
-	
-	public TimeoutException(Throwable cause, String message, Object... params) {
-		this(cause, new MessageFormat(message).format(params).toString());
-	}
 	
 	public TimeoutException(String message) {
 		super(message);
@@ -26,8 +18,9 @@ public class TimeoutException extends WebException {
 		this(new MessageFormat(message).format(params).toString());
 	}
 	
-	public TimeoutException(Throwable cause) {
-		super(cause);
+	@Override
+	public ReturnCode getCode() {
+		return ReturnCode.service_unknow;
 	}
 	
 }

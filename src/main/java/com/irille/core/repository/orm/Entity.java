@@ -27,7 +27,7 @@ public abstract class Entity extends Query2 {
 			if (field.column().isPrimary())
 				continue;
 			try {
-				q.VALUES(field, (Serializable) field.column().getterMethod().invoke(this));
+				q.VALUES(field.params((Serializable) field.column().getterMethod().invoke(this)));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
 			}

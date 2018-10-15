@@ -11,7 +11,6 @@ import com.irille.core.repository.User.OptType;
 import com.irille.core.repository.User.T;
 import com.irille.core.repository.User.UserView;
 import com.irille.core.repository.db.Transcation;
-import com.irille.test.aop.A;
 
 public class TestUser extends Query2 {
 
@@ -21,7 +20,6 @@ public class TestUser extends Query2 {
 	}
 
 	@Test
-	@A
 	public void test() throws JSONException {
 		Integer pkey = testIns();
 		testLoad(pkey);
@@ -61,7 +59,8 @@ public class TestUser extends Query2 {
 						T.USERNAME.as("username2"), 
 						T.ID.as("id2"))
 				.FROM(User.class)
-				.WHERE(T.PKEY, "=?", pkey)
+				.WHERE(T.PKEY.eq(pkey))
+				.ORDER_BY(T.PKEY, T.ID.asc())
 				.query(UserView.class)
 				);
 	}
@@ -70,14 +69,14 @@ public class TestUser extends Query2 {
 		// JsonWriter.toConsole(User.SELECT(User.class).queryMap());
 		JsonWriter.toConsole(
 				SELECT(User.class).
-				WHERE(T.PKEY, "=?", pkey).
+				WHERE(T.PKEY.eq(pkey)).
 				query()
 				);
 	}
 
 	public void testUpd(Integer pkey) throws JSONException {
 		User user = SELECT(User.class)
-				.WHERE(T.PKEY, "=?", pkey)
+				.WHERE(T.PKEY.eq(pkey))
 				.query();
 		user.setName("新名字");
 		user.setProductName("red shoes", Locale.ENGLISH);

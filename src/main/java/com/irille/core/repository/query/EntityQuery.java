@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import com.irille.core.commons.SetBeans.SetBean.SetBeans;
 import com.irille.core.repository.orm.ColumnTypes;
 import com.irille.core.repository.orm.Entity;
-import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.sql.EntitySQL;
 import com.irille.core.repository.sql.I18NEntitySQL;
 
@@ -39,12 +38,8 @@ public class EntityQuery<T> extends AbstractQuery {
 		return entityQuery;
 	}
 	
-	public EntityQuery<?> SELECT(IColumnField... flds) {
-		sql.SELECT(flds);
-		return this;
-	}
-	public EntityQuery<?> SELECT(IColumnField fld, String alias) {
-		sql.SELECT(fld, alias);
+	public EntityQuery<?> SELECT(IPredicate... predicates) {
+		sql.SELECT(predicates);
 		return this;
 	}
 	
@@ -94,46 +89,71 @@ public class EntityQuery<T> extends AbstractQuery {
 		this.sql.LIMIT(start, limit);
 		return this;
 	}
-	public EntityQuery<T> SET(IColumnField fld, Serializable param) {
-		this.sql.SET(fld, param);
+	public EntityQuery<T> SET(IPredicate predicate, Serializable param) {
+		this.sql.SET(predicate, param);
 		return this;
 	}
-	public EntityQuery<T> VALUES(IColumnField field, Serializable param) {
-		sql.VALUES(field, param);
+	public EntityQuery<T> VALUES(IPredicate predicate) {
+		sql.VALUES(predicate);
 		return this;
 	}
-	public EntityQuery<T> WHERE(IColumnField fld, String conditions, Serializable... params) {
-		sql.WHERE(fld, conditions, params);
+	public EntityQuery<T> VALUES(IPredicate... predicates) {
+		sql.VALUES(predicates);
 		return this;
 	}
-	public EntityQuery<T> WHERE(boolean test, IColumnField fld, String conditions, Serializable... params) {
+	public EntityQuery<T> WHERE(IPredicate predicate, String conditions, Serializable... params) {
+		sql.WHERE(predicate, conditions, params);
+		return this;
+	}
+	public EntityQuery<T> WHERE(IPredicate... predicates) {
+		sql.WHERE(predicates);
+		return this;
+	}
+	public EntityQuery<T> WHERE(boolean test, IPredicate predicate, String conditions, Serializable... params) {
 		if(test)
-			sql.WHERE(fld, conditions, params);
+			sql.WHERE(predicate, conditions, params);
 		return this;
 	}
-	public EntityQuery<T> WHERE(boolean test, IColumnField fld, String conditions, Supplier<Serializable> params) {
+	public EntityQuery<T> WHERE(boolean test, IPredicate predicate, String conditions, Supplier<Serializable> params) {
 		if(test)
-			sql.WHERE(fld, conditions, params.get());
+			sql.WHERE(predicate, conditions, params.get());
+		return this;
+	}
+	public EntityQuery<T> WHERE(boolean test, IPredicate... predicates) {
+		if(test)
+			sql.WHERE(predicates);
 		return this;
 	}
 	public EntityQuery<T> WHERE(String conditions, Serializable... params) {
 		sql.WHERE(conditions, params);
 		return this;
 	}
-	public <T2 extends Entity> EntityQuery<T> LEFT_JOIN(Class<T2> entityClass, IColumnField fld1, IColumnField fld2) {
-		sql.LEFT_JOIN(entityClass, fld1, fld2);
+	public EntityQuery<T> OR() {
+		sql.OR();
 		return this;
 	}
-	public <T2 extends Entity> EntityQuery<T> INNER_JOIN(Class<T2> entityClass, IColumnField fld1, IColumnField fld2) {
-		sql.INNER_JOIN(entityClass, fld1, fld2);
+	public <T2 extends Entity> EntityQuery<T> LEFT_JOIN(Class<T2> entityClass, IPredicate predicate1, IPredicate predicate2) {
+		sql.LEFT_JOIN(entityClass, predicate1, predicate2);
 		return this;
 	}
-	public EntityQuery<T> GROUP_BY(IColumnField fld) {
-		sql.GROUP_BY(fld);
+	public <T2 extends Entity> EntityQuery<T> INNER_JOIN(Class<T2> entityClass, IPredicate predicate1, IPredicate predicate2) {
+		sql.INNER_JOIN(entityClass, predicate1, predicate2);
 		return this;
 	}
-	public EntityQuery<T> ORDER_BY(IColumnField fld, String type) {
-		sql.ORDER_BY(fld, type);
+	public EntityQuery<T> GROUP_BY(IPredicate predicate) {
+		sql.GROUP_BY(predicate);
+		return this;
+	}
+	public EntityQuery<T> GROUP_BY(IPredicate... predicates) {
+		sql.GROUP_BY(predicates);
+		return this;
+	}
+	public EntityQuery<T> ORDER_BY(IPredicate predicate) {
+		sql.ORDER_BY(predicate);
+		return this;
+	}
+	public EntityQuery<T> ORDER_BY(IPredicate... predicates) {
+		sql.ORDER_BY(predicates);
 		return this;
 	}
 	
