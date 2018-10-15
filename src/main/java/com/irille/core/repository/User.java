@@ -151,7 +151,7 @@ public class User extends Entity {
 		this.normalBean = normalBean;
 	}
 	public NormalBean gtNormalBean() {
-		return SELECT(NormalBean.class, getNormalBean());
+		return selectFrom(NormalBean.class, getNormalBean());
 	}
 	public void stNormalBean(NormalBean normalBean) {
 		this.normalBean = normalBean.getPkey();

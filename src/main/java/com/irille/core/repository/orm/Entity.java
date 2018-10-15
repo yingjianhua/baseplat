@@ -22,12 +22,13 @@ public abstract class Entity extends Query2 {
 
 	public Entity ins() {
 		Table<?> table = Entity.table(this.getClass());
-		EntityQuery<?> q = INSERT(this.getClass());
+		EntityQuery<?> q = insert(this.getClass());
 		for (IColumnField field : Entity.fields(this.getClass())) {
 			if (field.column().isPrimary())
 				continue;
 			try {
-				q.VALUES(field, (Serializable) field.column().getterMethod().invoke(this));
+				Serializable value = (Serializable) field.column().getterMethod().invoke(this);
+				q.values(field.value(value));
 			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 				throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
 			}
@@ -42,21 +43,22 @@ public abstract class Entity extends Query2 {
 	}
 
 	public Entity upd() {
-		EntityQuery<?> q = UPDATE(this.getClass());
+		EntityQuery<?> q = update(this.getClass());
 		try {
 			IColumnField primaryField = null;
 			for (IColumnField field : Entity.fields(this.getClass())) {
 				if (field.column().isPrimary()) {
 					primaryField = field;
 				} else {
-					q.SET(field, (Serializable) field.column().getterMethod().invoke(this));
+					Serializable value = (Serializable) field.column().getterMethod().invoke(this);
+					q.set(field, value);
 				}
 			}
-			q.WHERE(primaryField, "=?", (Serializable) primaryField.column().getterMethod().invoke(this));
+			q.where(primaryField, "=?", (Serializable) primaryField.column().getterMethod().invoke(this));
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw LOG.err(e, "getmetod", "取对象【{0}】字段时出错!", getClass());
 		}
-		q.executeUpdate();
+		q.execute();
 		return this;
 	}
 
@@ -69,7 +71,7 @@ public abstract class Entity extends Query2 {
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw LOG.err(e, "setTo", "对象【{0}】赋值到数据库记录时出错!", getClass());
 		}
-		int row = DELETE(this.getClass()).WHERE(column.field(), "=?", primaryKeyValue).executeUpdate();
+		int row = delete(this.getClass()).where(column.field(), "=?", primaryKeyValue).execute();
 		if (row == 0)
 			throw LOG.err("deleteNotFound", "删除表【{0}】主键为【{1}】的记录不存在!", table.name(), primaryKeyValue);
 	}

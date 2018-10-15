@@ -29,7 +29,7 @@ public class ManyToOneColumn<T extends Entity> extends Column {
 		String gtterStterComment = 
 	    		new StringBuilder()
 	    		.append(TAB).append("public ").append(targetEntity.getSimpleName()).append(" ").append(gtterMethod()).append("() {").append(LN)
-	    		.append(TAB+TAB).append("return SELECT(").append(targetEntity.getSimpleName()).append(".class, ").append(getterMethodString()).append("());").append(LN)
+	    		.append(TAB+TAB).append("return selectFrom(").append(targetEntity.getSimpleName()).append(".class, ").append(getterMethodString()).append("());").append(LN)
 	    		.append(TAB).append("}").append(LN)
 	    		.append(TAB).append("public void ").append(stterMethod()).append("(").append(targetEntity.getSimpleName()).append(" ").append(fieldName()).append(") {").append(LN)
 	    		.append(TAB+TAB).append("this.").append(fieldName).append(" = ").append(fieldName()).append(".").append(((Table<?>)ClassTools.getStaticProerty(targetEntity, "table")).primaryKey().getterMethodString()).append("();").append(LN)

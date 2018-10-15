@@ -8,14 +8,6 @@ public class FieldValidateException extends WebException {
 	public FieldValidateException() {
 		super();
 	}
-
-	public FieldValidateException(Throwable cause, String message) {
-		super(message, cause);
-	}
-	
-	public FieldValidateException(Throwable cause, String message, Object... params) {
-		this(cause, new MessageFormat(message).format(params).toString());
-	}
 	
 	public FieldValidateException(String message) {
 		super(message);
@@ -25,7 +17,9 @@ public class FieldValidateException extends WebException {
 		this(new MessageFormat(message).format(params).toString());
 	}
 	
-	public FieldValidateException(Throwable cause) {
-		super(cause);
+	@Override
+	public ReturnCode getCode() {
+		return ReturnCode.valid_unknow;
 	}
+
 }

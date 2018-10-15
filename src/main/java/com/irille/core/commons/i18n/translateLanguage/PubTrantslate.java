@@ -1,12 +1,13 @@
 package com.irille.core.commons.i18n.translateLanguage;
 
+import java.util.Date;
+import java.util.stream.Stream;
+
 import irille.pub.bean.BeanInt;
 import irille.pub.svr.Env;
 import irille.pub.tb.Fld;
 import irille.pub.tb.IEnumFld;
 import irille.pub.tb.Tb;
-
-import java.util.Date;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,7 +19,7 @@ public class PubTrantslate extends BeanInt<PubTrantslate> {
     public static final Tb TB = new Tb(PubTrantslate.class, "翻译缓存类").setAutoIncrement();
 
     public enum T implements IEnumFld {
-        PKEY(TB.crtIntPkey()),
+        PKEY(Tb.crtIntPkey()),
         HASHCODE(SYS.STR__100_NULL),
         SOURCE_TEXT(SYS.TEXT__20000_NULL),
         TARGET(SYS.STR__10),
@@ -30,37 +31,39 @@ public class PubTrantslate extends BeanInt<PubTrantslate> {
         ;
         //>>>以下是自动产生的源代码行--自动建立的索引定义--请保留此行用于识别>>>
         //<<<以上是自动产生的源代码行--自动建立的索引定义--请保留此行用于识别<<<
-        private Fld _fld;
+		private Fld<?> _fld;
 
-        private T(Class clazz, String name, boolean... isnull) {
-            _fld = TB.addOutKey(clazz, this, name, isnull);
-        }
+		private T(Class<?> clazz, String name, boolean... isnull) {
+			_fld = IEnumFld.crtFld(this, clazz, name, isnull);
+		}
 
-        private T(IEnumFld fld, boolean... isnull) {
-            this(fld, null, isnull);
-        }
+		private T(IEnumFld fld, boolean... isnull) {
+			_fld = IEnumFld.crtFld(this, fld, null, isnull);
+		}
 
-        private T(IEnumFld fld, String name, boolean... null1) {
-            _fld = TB.add(fld, this, name, null1);
-        }
+		private T(IEnumFld fld, String name, boolean... null1) {
+			_fld = IEnumFld.crtFld(this, fld, name, null1);
+		}
 
-        private T(IEnumFld fld, String name, int strLen) {
-            _fld = TB.add(fld, this, name, strLen);
-        }
+		private T(IEnumFld fld, String name, int strLen) {
+			_fld = IEnumFld.crtFld(this, fld, name, strLen);
+		}
 
-        private T(Fld fld) {
-            _fld = TB.add(fld, this);
-        }
+		private T(Fld<?> fld) {
+			_fld = IEnumFld.crtFld(this, fld);
+		}
 
-        public Fld getFld() {
-            return _fld;
-        }
+		public Fld<?> getFld() {
+			return _fld;
+		}
 
     }
 
 
     static { //在此可以加一些对FLD进行特殊设定的代码
-        PubTrantslate.T.PKEY.getFld().getTb().lockAllFlds();//加锁所有字段,不可以修改
+    	Stream.of(T.values()).forEach(f->TB.add(f.getFld()));
+		TB.lockAllFlds();
+//        PubTrantslate.T.PKEY.getFld().getTb().lockAllFlds();//加锁所有字段,不可以修改
     }
 
     public static Fld fldOutKey() {

@@ -1,11 +1,11 @@
 package com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert;
 
 
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-
 import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.IConvertBeanFactory;
 import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Tools;
+
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,7 +16,6 @@ import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Tools;
 public class TimestampToStringConvert implements IConvertBeanFactory<Timestamp, String> {
     @Override
     public String getName() {
-        System.out.println(Tools.getName(Timestamp.class, String.class));
         return Tools.getName(Timestamp.class, String.class);
     }
 

@@ -43,6 +43,11 @@ public class SQL {
   public SQL SELECT(String... columns) {
 	  return mybatisSQL.SELECT(columns);
   }
+  public SQL SELECT(SQL table, String alias) {
+	  if(table.mybatisSQL.PARAMS().size()>0)
+		  mybatisSQL.PARAM(table.mybatisSQL.PARAMS().toArray(new Serializable[]{}));
+	  return mybatisSQL.SELECT("("+table+") as "+alias);
+  }
   public SQL SELECT(IEnumFld fld, String alias) {
 	  return mybatisSQL.SELECT(fld, alias);
   }
@@ -55,15 +60,37 @@ public class SQL {
 	  return mybatisSQL.FROM(beanClass);
   }
   
+  public <T extends BeanMain<?, ?>> SQL FROM(String table) {
+	  return mybatisSQL.FROM(table);
+  }
+  
+  public <T extends BeanMain<?, ?>> SQL FROM(SQL table, String alias) {
+	  if(table.mybatisSQL.PARAMS().size()>0)
+		  mybatisSQL.PARAM(table.mybatisSQL.PARAMS().toArray(new Serializable[]{}));
+	  return mybatisSQL.FROM("("+table+") "+alias);
+  }
+  
   public <T extends BeanMain<?, ?>> SQL LEFT_JOIN(Class<T> beanClass, IEnumFld fld1, IEnumFld fld2) {
 	  return mybatisSQL.LEFT_OUTER_JOIN(beanClass, fld1, fld2);
   }
+  
+  public <T extends BeanMain<?, ?>> SQL LEFT_JOIN(String... joins) {
+	  return mybatisSQL.LEFT_OUTER_JOIN(joins);
+  }
+  
   public <T extends BeanMain<?, ?>> SQL INNER_JOIN(Class<T> beanClass, IEnumFld fld1, IEnumFld fld2) {
 	  return mybatisSQL.INNER_JOIN(beanClass, fld1, fld2);
   }
   
+  public <T extends BeanMain<?, ?>> SQL WHERE(boolean test, IEnumFld fld, String conditions) {
+	  return test?this.WHERE(fld, conditions):mybatisSQL.getSelf();
+  }
   public <T extends BeanMain<?, ?>> SQL WHERE(IEnumFld fld, String conditions) {
 	  return mybatisSQL.WHERE(fld, conditions);
+  }
+  
+  public <T extends BeanMain<?, ?>> SQL WHERE(boolean test, IEnumFld fld, String conditions, Serializable... params) {
+	  return test?this.WHERE(fld, conditions, params):mybatisSQL.getSelf();
   }
   
   public <T extends BeanMain<?, ?>> SQL WHERE(IEnumFld fld, String conditions, Serializable... params) {
@@ -77,6 +104,10 @@ public class SQL {
 		  }
 	  }
 	  return mybatisSQL.getSelf();
+  }
+  
+  public <T extends BeanMain<?, ?>> SQL WHERE(boolean test, String conditions, Serializable... params) {
+	  return test?this.WHERE(conditions, params):mybatisSQL.getSelf();
   }
   
   public <T extends BeanMain<?, ?>> SQL WHERE(String conditions, Serializable... params) {
@@ -96,8 +127,24 @@ public class SQL {
 	  return mybatisSQL.ORDER_BY(fld, type);
   }
   
+  public <T extends BeanMain<?, ?>> SQL ORDER_BY(String column) {
+	  return mybatisSQL.ORDER_BY(column);
+  }
+  
+  public <T extends BeanMain<?, ?>> SQL ORDER_BY(String... columns) {
+	  return mybatisSQL.ORDER_BY(columns);
+  }
+  
   public <T extends BeanMain<?, ?>> SQL GROUP_BY(IEnumFld fld) {
 	  return mybatisSQL.GROUP_BY(fld);
+  }
+  
+  public <T extends BeanMain<?, ?>> SQL GROUP_BY(String... columns) {
+	  return mybatisSQL.GROUP_BY(columns);
+  }
+  
+  public <T extends BeanMain<?, ?>> SQL HAVING(String condition) {
+	  return mybatisSQL.HAVING(condition);
   }
   
   public <T extends BeanMain<?, ?>> SQL LIMIT(int start, int limit) {

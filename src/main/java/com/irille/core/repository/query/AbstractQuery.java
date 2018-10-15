@@ -79,9 +79,10 @@ public abstract class AbstractQuery {
 		int s = sql.indexOf(" LIMIT");
 		if(s!=-1)
 			sql = sql.substring(0, s);
-		sql = sql.replaceFirst("(select|SELECT)\\s+.*\\s+(FROM|from)", "SELECT COUNT(1) FROM");
+		sql = sql.replaceFirst("(select|SELECT)\\s+.*?\\s+(FROM|from)", "SELECT COUNT(1) FROM");
 		return query(rs->ResultMapper.asObject(rs, Integer.class), needDebug(), sql, getParams());
 	}
+	
 	/**
 	 * 统计记录数
 	 * 
@@ -230,10 +231,9 @@ public abstract class AbstractQuery {
 		} else {
 			Optional<StackTraceElement> o2 = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Action")||st.getClassName().contains("Action$")).findFirst();
 			if(o2.isPresent())
-				logger.warn("数据库查询没有写在Dao里面,有问题... "+o2.get().toString());
+				logger.debug("sql:"+sql+"|"+params(params)+"] [stackTrace: "+o.get().toString());
 			else
-				logger.warn("数据库查询没有写在Dao里面,有问题... 未知位置!!!");
-			logger.debug("sql:"+sql+"|"+params(params));
+				logger.debug("sql:"+sql+"|"+params(params));
 		}
 	}
 	

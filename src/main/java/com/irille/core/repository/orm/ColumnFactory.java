@@ -17,6 +17,11 @@ public class ColumnFactory {
 		return new ManyToOneColumnBuilder<T>(entityClass);
 	}
 	
+	public static <T extends Entity> ManyToOneColumnBuilder<T> manyToOne(IColumnField field) {
+		return new ManyToOneColumnBuilder<T>(field);
+	}
+	
+	
 	public static <T extends Entity> OptColumnBuilder opt(IEnumOpt opt) {
 		return new OptColumnBuilder(opt);
 	}

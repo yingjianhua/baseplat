@@ -14,11 +14,18 @@ public abstract class EntityAction<T extends Entity, R extends Serializable> {
 	}
 	private Class<T> entityClass;
 	
+	private R id;
 	private R pkey;
 	private T bean = null;
 	
 	public final Class<T> entityClazz(){
 		return entityClass;
+	}
+	public R getId() {
+		return id;
+	}
+	public void setId(R id) {
+		this.id = id;
 	}
 	public final R getPkey() {
 		return pkey;

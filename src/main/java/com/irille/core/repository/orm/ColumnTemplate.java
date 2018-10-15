@@ -24,26 +24,33 @@ public enum ColumnTemplate implements IColumnTemplate {
 	TEXT__20000_NULL(TEXT_NULL.length(20000)),
 	JSON(ColumnFactory.type(ColumnTypes.JSONOBJECT)),
 	I18N(ColumnFactory.i18n()),
-	
-	INT__11(ColumnFactory.type(ColumnTypes.INT).length(11)),
-	INT__11_NULL(ColumnFactory.type(ColumnTypes.INT).length(11).nullable(true)),
-	INT__11_ZERO(ColumnFactory.type(ColumnTypes.INT).length(11).defaultValue(0)),
-	DATA(ColumnFactory.type(ColumnTypes.DATE).nullable(true)),
-	TIME(ColumnFactory.type(ColumnTypes.TIME)),
-	SHORT(ColumnFactory.type(ColumnTypes.SHORT).length(6)),
-	PKEY(INT__11.primary(true).autoIncrement(true)),
-	OPTION(ColumnFactory.type(ColumnTypes.OPTLINE).length(4)),
-	BOOLEAN(ColumnFactory.type(ColumnTypes.BOOLEAN)),
-	AMT(ColumnFactory.type(ColumnTypes.DEC).precision(10).scale(2).defaultValue(BigDecimal.ONE).showName("金额")),
 	EMAIL(ColumnTemplate.STR__50_NULL.nullable(true).showName("邮件")),
 	QQ(ColumnTemplate.STR__50_NULL.showName("QQ")),
 	MOBILE(ColumnTemplate.STR__50_NULL.showName("联系方式")),
 	IMG(ColumnTemplate.STR__200_NULL.showName("图片")),
 	IMG_2000(ColumnTemplate.STR__2000_NULL.showName("图片")),
-	DISCOUNT(ColumnFactory.type(ColumnTypes.DEC).precision(10).scale(2).defaultValue(BigDecimal.ZERO).showName("折扣")),
+	
+	INT__11(ColumnFactory.type(ColumnTypes.INT).length(11)),
+	INT__11_NULL(ColumnFactory.type(ColumnTypes.INT).length(11).nullable(true)),
+	INT__11_ZERO(ColumnFactory.type(ColumnTypes.INT).length(11).defaultValue(0)),
+	PKEY(INT__11.primary(true).autoIncrement(true).showName("主键")),
+	
+	DATA(ColumnFactory.type(ColumnTypes.DATE).nullable(true)),
+	TIME(ColumnFactory.type(ColumnTypes.TIME)),
+	
+	SHORT(ColumnFactory.type(ColumnTypes.SHORT).length(6)),
+	ROW_VERSION(SHORT.showName("行版本")),
+	
+	OPTION(ColumnFactory.type(ColumnTypes.OPTLINE).length(4)),
+	
+	BOOLEAN(ColumnFactory.type(ColumnTypes.BOOLEAN)),
 	BOOLEAN_TRUE(ColumnTemplate.BOOLEAN.defaultValue("1")),
 	BOOLEAN_FALSE(ColumnTemplate.BOOLEAN.defaultValue("0")),
-		;
+	
+	AMT(ColumnFactory.type(ColumnTypes.DEC).precision(10).scale(2).defaultValue(BigDecimal.ONE).showName("金额")),
+	DISCOUNT(ColumnFactory.type(ColumnTypes.DEC).precision(10).scale(2).defaultValue(BigDecimal.ZERO).showName("折扣")),
+	
+	;
 	ColumnBuilder builder;
 	
 	ColumnTemplate(ColumnBuilder columnBuilder) {

@@ -11,6 +11,16 @@ import irille.pub.Str;
 public class ManyToOneColumnBuilder<T extends Entity> extends ColumnBuilder {
     
     Class<T> targetEntity;
+    
+    @SuppressWarnings("unchecked")
+	public ManyToOneColumnBuilder(IColumnField field) {
+    	targetEntity((Class<T>)field.getClass().getDeclaringClass());
+    	Column outKey = field.column();
+    	type(outKey.type());
+		length(outKey.getLength());
+		precision(outKey.getPrecision());
+		scale(outKey.getScale());
+    }
 
     public ManyToOneColumnBuilder(Class<T> targetEntity) {
     	super();

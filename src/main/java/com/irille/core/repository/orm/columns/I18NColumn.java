@@ -6,27 +6,27 @@ import com.irille.core.repository.orm.IColumnField;
 
 public class I18NColumn extends Column{
 
-	public enum Language {
-		en("English"),
-		ja("日文"),
-		de("德语"),
-		fr("法语"),
-		es("西班牙语"),
-		ru("俄语"),
-		pt("葡萄牙语"),
-		zh_CN("简体中文"),
-		zh_TW("繁体中文"),
-		hu("匈牙利语"),
-		ro("罗马尼亚语"),
-		;
-		private Language(String displayName) {
-			this.displayName = displayName;
-		}
-		private String displayName;
-		public String displayName() {
-			return this.displayName;
-		}
-	}
+//	public enum Language {
+//		en("English"),
+//		ja("日文"),
+//		de("德语"),
+//		fr("法语"),
+//		es("西班牙语"),
+//		ru("俄语"),
+//		pt("葡萄牙语"),
+//		zh_CN("简体中文"),
+//		zh_TW("繁体中文"),
+//		hu("匈牙利语"),
+//		ro("罗马尼亚语"),
+//		;
+//		private Language(String displayName) {
+//			this.displayName = displayName;
+//		}
+//		private String displayName;
+//		public String displayName() {
+//			return this.displayName;
+//		}
+//	}
 	
 	public I18NColumn(IColumnField field, String showName, String columnName, String fieldName, ColumnTypes type, boolean unique, boolean primary, boolean autoIncrement, boolean nullable, Object defaultValue,
 			String columnDefinition, int length, int precision, int scale, String comment) {
