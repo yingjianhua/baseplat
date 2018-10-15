@@ -1,11 +1,15 @@
 package com.irille.core.repository.query;
 
+import java.io.Serializable;
+
 import com.irille.core.repository.orm.Column;
 import com.irille.core.repository.orm.IColumnField;
 
 public class Predicate implements IColumnField {
 	private Column column;
 	private String alias;
+	private Serializable[] params;
+	private String conditions;
 	
 	public Predicate(Column column) {
 		this.column = column;
@@ -24,8 +28,30 @@ public class Predicate implements IColumnField {
 		this.alias = alias;
 		return this;
 	}
-	public Predicate as(String alias) {
-		return new Predicate(column()).alias(alias);
+	public Predicate eq(Serializable param) {
+		this.conditions = "=?";
+		this.params = new Serializable[] {param};
+		return this;
+	}
+	public Predicate gt(Serializable param) {
+		this.conditions = ">?";
+		this.params = new Serializable[] {param};
+		return this;
+	}
+	public Predicate lt(Serializable param) {
+		this.conditions = "<?";
+		this.params = new Serializable[] {param};
+		return this;
+	}
+	public Predicate between(Serializable param, Serializable param2) {
+		this.conditions = "between ? and ?";
+		this.params = new Serializable[] {param, param2};
+		return this;
+	}
+	public Predicate like(Serializable param) {
+		this.conditions = "like ?";
+		this.params = new Serializable[] {param};
+		return this;
 	}
 	public String columnName() {
     	return this.column().columnName();
@@ -39,5 +65,11 @@ public class Predicate implements IColumnField {
 		else
 			return this.column().columnNameWithAlias();
     }
+	public String getConditions() {
+		return this.conditions;
+	}
+	public Serializable[] getParams() {
+		return this.params;
+	}
 
 }

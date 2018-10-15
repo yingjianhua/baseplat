@@ -106,6 +106,10 @@ public class EntityQuery<T> extends AbstractQuery {
 		sql.WHERE(fld, conditions, params);
 		return this;
 	}
+	public EntityQuery<T> WHERE(Predicate... predicates) {
+		sql.WHERE(predicates);
+		return this;
+	}
 	public EntityQuery<T> WHERE(boolean test, IColumnField fld, String conditions, Serializable... params) {
 		if(test)
 			sql.WHERE(fld, conditions, params);
@@ -116,8 +120,17 @@ public class EntityQuery<T> extends AbstractQuery {
 			sql.WHERE(fld, conditions, params.get());
 		return this;
 	}
+	public EntityQuery<T> WHERE(boolean test, Predicate... predicates) {
+		if(test)
+			sql.WHERE(predicates);
+		return this;
+	}
 	public EntityQuery<T> WHERE(String conditions, Serializable... params) {
 		sql.WHERE(conditions, params);
+		return this;
+	}
+	public EntityQuery<T> OR() {
+		sql.OR();
 		return this;
 	}
 	public <T2 extends Entity> EntityQuery<T> LEFT_JOIN(Class<T2> entityClass, IColumnField fld1, IColumnField fld2) {

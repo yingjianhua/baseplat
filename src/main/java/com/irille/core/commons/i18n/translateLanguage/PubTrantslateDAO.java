@@ -1,6 +1,6 @@
 package com.irille.core.commons.i18n.translateLanguage;
 
-import java.util.List;
+import java.util.Date;
 
 import com.irille.core.commons.i18n.translateLanguage.PubTrantslate.T;
 import com.irille.core.repository.Query;
@@ -17,17 +17,22 @@ import irille.pub.svr.Env;
  */
 public class PubTrantslateDAO {
     public static class Select extends IduOther<Select, PubTrantslate> {
+    	
         public TranslateBean getTransLatesByHashCode(String sourceText, String  targetLanguage) {
-        	List<PubTrantslate> list = Query.SELECT(PubTrantslate.class).WHERE(T.HASHCODE, "=?", sourceText.hashCode()).WHERE(T.TARGET, "=?", targetLanguage).queryList();
-            if (list.size() > 0) {
-                PubTrantslate pubTrantslate = list.get(0);
-                TranslateBean translateBean = new TranslateBean();
-                translateBean.setTargetLanguage(pubTrantslate.getTarget());
-                translateBean.setText(pubTrantslate.getTargetText());
-                return translateBean;
-            }
-            return null;
+        	PubTrantslate bean = Query.SELECT(PubTrantslate.class).WHERE(T.HASHCODE, "=?", sourceText.hashCode()).WHERE(T.TARGET, "=?", targetLanguage).query();
+        	if(bean!=null) {
+        		TranslateBean translateBean = new TranslateBean();
+        		translateBean.setTargetLanguage(bean.getTarget());
+        		translateBean.setText(bean.getTargetText());
+        		return translateBean;
+        	} else {
+        		return null;
+        	}
         }
+    }
+    public static void ins(PubTrantslate bean) {
+    	bean.setCreatedTime(new Date());
+    	bean.ins();
     }
 
     public static class Ins extends IduIns<Ins, PubTrantslate> {

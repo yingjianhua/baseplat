@@ -1,6 +1,7 @@
 package irille.pub.svr;
 
 
+import com.irille.core.web.exception.WebMessageException;
 import irille.pub.Exp;
 import irille.pub.Log;
 
@@ -18,6 +19,9 @@ public class ItpFileUpload extends FileUploadInterceptor {
 		try {
 			result = super.intercept(invocation);
 		} catch (Exception e) {
+			if(e instanceof WebMessageException){
+				throw e;
+			}
 			if (e instanceof Exp)
 				throw e;
 			e.printStackTrace();

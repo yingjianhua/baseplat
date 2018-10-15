@@ -12,6 +12,7 @@ import irille.pub.view.VFldLanguage;
 public class FldLanguage<T extends FldLanguage> extends FldJSONObject<T> {
 	
 	public enum Language {
+		ar("阿拉伯语"),
 		en("English"),
 		ja("日文"),
 		de("德语"),

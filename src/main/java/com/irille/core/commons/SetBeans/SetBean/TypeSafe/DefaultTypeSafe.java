@@ -1,18 +1,13 @@
 package com.irille.core.commons.SetBeans.SetBean.TypeSafe;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.irille.core.commons.SetBeans.SetBean.Beans.TypeSafeResult;
+import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.*;
 import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.IConvertBeanFactory;
 import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Tools;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.DateToStringConvert;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.DateoDateConvert;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.SqlDateToStringConvert;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.StringToListConvert;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.StringToLongConvert;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.StringTolong_Convert;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.TimestampToDateConvert;
-import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.TimestampToStringConvert;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,6 +16,7 @@ import com.irille.core.commons.SetBeans.SetBean.ConvertibleBeanFactorys.Convert.
  * Time: 10:33
  */
 public class DefaultTypeSafe implements ITypeSafe {
+    private static final Logger logger = LoggerFactory.getLogger(DefaultTypeSafe.class);
     private ConcurrentHashMap<String, IConvertBeanFactory> map;
 
     public IConvertBeanFactory getConvertFactorys(String name) {
@@ -60,12 +56,14 @@ public class DefaultTypeSafe implements ITypeSafe {
             } else {
                 String key = Tools.getName(getValueClass, setType);
                 IConvertBeanFactory iConvertBeanFactory = map.get(key);
-
                 if (iConvertBeanFactory != null) {
                     result.setSetValue(iConvertBeanFactory.convert(getValue));
                     result.setSetType(iConvertBeanFactory.getType());
                     return result;
                 } else {
+                    logger.debug("没有相应的类型转换工厂,进入 默认方法");
+                    logger.debug(String.valueOf(getValueClass));
+                    logger.debug(String.valueOf(setType));
                     result.setSetType(getValueClass);
                     result.setSetValue(getValue);
                     return result;

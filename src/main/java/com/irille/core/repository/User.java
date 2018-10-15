@@ -16,16 +16,14 @@ import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.orm.IColumnTemplate;
 import com.irille.core.repository.orm.Table;
 import com.irille.core.repository.orm.TableFactory;
+import com.irille.core.repository.orm.columns.I18NColumn;
 
 import irille.pub.tb.EnumLine;
+import irille.pub.tb.FldLanguage;
 import irille.pub.tb.IEnumOpt;
 import irille.view.BaseView;
 
 public class User extends Entity {
-	
-	public static void main(String[] args) {
-		System.out.println(User.class.getName());
-	}
 	
 	static public class UserView implements BaseView {
 		private String name2;

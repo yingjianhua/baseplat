@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 import com.irille.core.repository.orm.Entity;
 import com.irille.core.repository.orm.IColumnField;
+import com.irille.core.repository.query.Predicate;
 
 import irille.pub.tb.IEnumOpt;
 
@@ -74,6 +75,20 @@ public class EntitySQL {
   public <T extends Entity> EntitySQL INNER_JOIN(Class<T> entityClass, IColumnField fld1, IColumnField fld2) {
 	  return mybatisSQL.INNER_JOIN(Entity.table(entityClass).nameWithAlias()+" ON "+fld1.columnFullName()+"="+fld2.columnFullName());
   }
+  public <T extends Entity> EntitySQL WHERE(Predicate... predicates) {
+	  for (Predicate predicate : predicates) {
+		  mybatisSQL.WHERE((mybatisSQL.isSelect()?predicate.columnFullName():predicate.columnName())+" "+predicate.getConditions());
+		  for(Serializable param:predicate.getParams()) {
+			  if(param instanceof IEnumOpt) {
+				  IEnumOpt opt = (IEnumOpt)param;
+				  mybatisSQL.PARAM(opt.getLine().getKey());
+			  } else {
+				  mybatisSQL.PARAM(param);
+			  }
+		  }
+	  }
+	  return mybatisSQL.getSelf();
+  }
   public <T extends Entity> EntitySQL WHERE(IColumnField fld, String conditions) {
 	return mybatisSQL.WHERE((mybatisSQL.isSelect()?fld.columnFullName():fld.columnName())+" "+conditions);
   }
@@ -102,7 +117,9 @@ public class EntitySQL {
 	  }
 	  return mybatisSQL.getSelf();
   }
-  
+  public <T extends Entity> EntitySQL OR() {
+	  return mybatisSQL.OR();
+  }
   public <T extends Entity> EntitySQL ORDER_BY(IColumnField fld, String type) {
 	  return mybatisSQL.ORDER_BY(fld.columnFullName()+" "+type);
   }

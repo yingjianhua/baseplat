@@ -45,6 +45,10 @@ public class Query {
 		BeanQuery<?> q = new BeanQuery<>();
 		return q.SELECT(flds);
 	}
+	public static <T extends BeanMain<?, ?>> BeanQuery<T> selectFrom(Class<T> beanClass) {
+		BeanQuery<?> q = new BeanQuery<>();
+		return q.SELECT(beanClass).FROM(beanClass);
+	}
 	public static <T extends BeanMain<?, ?>> BeanQuery<T> SELECT(Class<T> beanClass) {
 		BeanQuery<?> q = new BeanQuery<>();
 		return q.SELECT(beanClass).FROM(beanClass);

@@ -10,8 +10,6 @@ import com.irille.core.controller.JsonWriter;
 import com.irille.core.repository.User.OptType;
 import com.irille.core.repository.User.T;
 import com.irille.core.repository.User.UserView;
-import com.irille.core.repository.db.Transcation;
-import com.irille.test.aop.A;
 
 public class TestUser extends Query2 {
 
@@ -21,7 +19,6 @@ public class TestUser extends Query2 {
 	}
 
 	@Test
-	@A
 	public void test() throws JSONException {
 		Integer pkey = testIns();
 		testLoad(pkey);
@@ -32,11 +29,7 @@ public class TestUser extends Query2 {
 		testLoad(pkey);
 		// ConnectionManager.commitConnection();
 	}
-	public static void main(String[] args) {
-		System.out.println(1);
-	}
 
-	@Transcation
 	public Integer testIns() {
 		User user = new User();
 		user.setId(999);
