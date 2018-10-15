@@ -1,5 +1,6 @@
 package com.irille.core.repository.orm;
 
+import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import java.util.stream.Stream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.irille.core.controller.JsonWriter;
 import com.irille.core.repository.Query;
 import com.irille.core.repository.db.ConnectionManager;
 
@@ -67,8 +69,9 @@ public class Table <T extends Entity> {
 	}
 	
 	public boolean exists() throws SQLException {
-		DatabaseMetaData meta = ConnectionManager.getConnection().getMetaData();
-		ResultSet rs = meta.getTables("baseplat", null, name, null);
+		Connection connection = ConnectionManager.getConnection();
+		DatabaseMetaData meta = connection.getMetaData();
+		ResultSet rs = meta.getTables(connection.getCatalog(), null, name, null);
 		return rs.next()?true:false;
 	}
 	
@@ -78,7 +81,7 @@ public class Table <T extends Entity> {
 	
 	public void drop(boolean force) throws SQLException {
 		if(exists() && (force||!haveRecord())) {
-			Query.sql("DROP TABLE "+name).executeUpdate();
+			Query.sql("DROP TABLE IF EXISTS "+name).executeUpdate();
 			logger.info("删除表[{}]-->成功!", name);
 		}
 	}

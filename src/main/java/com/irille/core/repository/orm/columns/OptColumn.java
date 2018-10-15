@@ -30,7 +30,7 @@ public class OptColumn extends Column {
 		String gtterStterComment = 
 	    		new StringBuilder()
 	    		.append(TAB).append("public ").append(opt.getClass().getSimpleName()).append(" ").append(gtterMethod()).append("() {").append(LN)
-	    		.append(TAB+TAB).append("return (").append(opt.getClass().getSimpleName()).append(")(").append(opt.getClass().getSimpleName()).append(".").append(opt.name()).append(".getLine().get(").append(columnName).append("));").append(LN)
+	    		.append(TAB+TAB).append("return (").append(opt.getClass().getSimpleName()).append(")(").append(opt.getClass().getSimpleName()).append(".").append(opt.name()).append(".getLine().get(").append(fieldName).append("));").append(LN)
 	    		.append(TAB).append("}").append(LN)
 	    		.append(TAB).append("public void ").append(stterMethod()).append("(").append(opt.getClass().getSimpleName()).append(" ").append(fieldName()).append(") {").append(LN)
 	    		.append(TAB+TAB).append("this.").append(fieldName).append(" = ").append(fieldName()).append(".getLine().getKey();").append(LN)

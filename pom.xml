@@ -7,12 +7,21 @@
 
 	<groupId>com.irille</groupId>
 	<artifactId>baseplat</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 
 	<name>baseplat</name>
 	<!-- FIXME change it to the project's website -->
 	<url>http://www.example.com</url>
-
+	<distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://192.168.100.48:32771/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://192.168.100.48:32771/repository/maven-snapshots/</url>
+        </snapshotRepository>		
+	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
@@ -30,12 +39,6 @@
 	</properties>
 
 	<dependencies>
-
-		<dependency>
-			<groupId>com.irille.test</groupId>
-			<artifactId>aop</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
-		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/com.google.cloud/google-cloud-translate -->
 		<dependency>
@@ -227,16 +230,16 @@
 	</dependencies>
 
 	<build>
-		<plugins>
+		<!-- <plugins>
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>aspectj-maven-plugin</artifactId>
 			</plugin>
-		</plugins>
+		</plugins> -->
 		<pluginManagement><!-- lock down plugins versions to avoid using Maven 
 				defaults (may be moved to parent pom) -->
 			<plugins>
-				<plugin>
+				<!-- <plugin>
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>aspectj-maven-plugin</artifactId>
 					<version>1.11</version>
@@ -283,7 +286,7 @@
 							<version>${aspectj.runtime.version}</version>
 						</dependency>
 					</dependencies>
-				</plugin>
+				</plugin> -->
 				<plugin>
 					<artifactId>maven-clean-plugin</artifactId>
 					<version>3.0.0</version>

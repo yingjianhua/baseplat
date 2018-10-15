@@ -4,14 +4,13 @@ import java.io.Serializable;
 import java.util.List;
 
 import com.irille.core.repository.orm.Entity;
-import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.query.EntityQuery;
+import com.irille.core.repository.query.IPredicate;
 import com.irille.core.repository.query.SqlQuery;
-import com.irille.core.repository.sql.SQL;
+import com.irille.core.repository.sql.EntitySQL;
 
 import irille.pub.Log;
 import irille.pub.svr.DbPool;
-import irille.pub.tb.FldLanguage.Language;
 
 public class Query2 {
 	public static final Log LOG = new Log(Query2.class);
@@ -38,43 +37,43 @@ public class Query2 {
 	public static SqlQuery sql(String sql, List<Serializable> params) {
 		return new SqlQuery(sql, params.toArray(new Serializable[params.size()]));
 	}
-	public static SqlQuery sql(SQL sql) {
-		return new SqlQuery(sql.toString(), sql.PARAMS().toArray(new Serializable[sql.PARAMS().size()]));
+	public static SqlQuery sql(EntitySQL sql) {
+		return new SqlQuery(sql.toString(), sql.params().toArray(new Serializable[sql.params().size()]));
 	}
-	public static EntityQuery<?> SELECT(IColumnField... flds) {
+	public static EntityQuery<?> select(IPredicate... predicates) {
 		EntityQuery<?> q = new EntityQuery<>();
-		return q.SELECT(flds);
+		return q.select(predicates);
 	}
-	public static <T extends Entity> EntityQuery<T> SELECT(Class<T> beanClass) {
+	public static <T extends Entity> EntityQuery<T> selectFrom(Class<T> entityClass) {
 		EntityQuery<?> q = new EntityQuery<>();
-		return q.SELECT(beanClass).FROM(beanClass);
+		return q.select(entityClass).FROM(entityClass);
 	}
-	public static <T extends Entity> T SELECT(Class<T> beanClass, Serializable pkey) {
+	public static <T extends Entity> T selectFrom(Class<T> entityClass, Serializable pkey) {
 		EntityQuery<?> q = new EntityQuery<>();
-		return q.SELECT(beanClass).FROM(beanClass).WHERE("pkey=?", pkey).query();
+		return q.select(entityClass).FROM(entityClass).where("pkey=?", pkey).query();
 	}
 	
-	public static <T extends Entity> EntityQuery<T> UPDATE(Class<T> beanClass) {
-		return new EntityQuery<>().UPDATE(beanClass);
+	public static <T extends Entity> EntityQuery<T> update(Class<T> entityClass) {
+		return new EntityQuery<>().update(entityClass);
 	}
-	public static <T extends Entity> EntityQuery<T> DELETE(Class<T> beanClass) {
-		return new EntityQuery<>().DELETE(beanClass);
+	public static <T extends Entity> EntityQuery<T> delete(Class<T> entityClass) {
+		return new EntityQuery<>().delete(entityClass);
 	}
-	public static <T extends Entity> EntityQuery<T> INSERT(Class<T> beanClass) {
-		return new EntityQuery<>().INSERT(beanClass);
+	public static <T extends Entity> EntityQuery<T> insert(Class<T> entityClass) {
+		return new EntityQuery<>().insert(entityClass);
 	}
 	
-	public static EntityQuery<?> SELECT(Language lang, IColumnField... flds) {
-		EntityQuery<?> q = new EntityQuery<>(lang);
-		return q.SELECT(flds);
-	}
-	public static <T extends Entity> EntityQuery<T> SELECT(Class<T> beanClass, Language lang) {
-		EntityQuery<?> q = new EntityQuery<>(lang);
-		return q.SELECT(beanClass).FROM(beanClass);
-	}
-	public static <T extends Entity> T SELECT(Class<T> beanClass, Language lang, Integer pkey) {
-		EntityQuery<?> q = new EntityQuery<>(lang);
-		return q.SELECT(beanClass).FROM(beanClass).WHERE("pkey=?", pkey).query();
-	}
+//	public static EntityQuery<?> SELECT(Language lang, IPredicate... predicates) {
+//		EntityQuery<?> q = new EntityQuery<>(lang);
+//		return q.select(predicates);
+//	}
+//	public static <T extends Entity> EntityQuery<T> SELECT(Class<T> entityClass, Language lang) {
+//		EntityQuery<?> q = new EntityQuery<>(lang);
+//		return q.select(entityClass).FROM(entityClass);
+//	}
+//	public static <T extends Entity> T SELECT(Class<T> entityClass, Language lang, Integer pkey) {
+//		EntityQuery<?> q = new EntityQuery<>(lang);
+//		return q.select(entityClass).FROM(entityClass).where("pkey=?", pkey).query();
+//	}
 	
 }

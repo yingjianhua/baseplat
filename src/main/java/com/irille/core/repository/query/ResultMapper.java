@@ -112,7 +112,7 @@ public class ResultMapper {
 			value = rs.getObject(columnLabel);
 			break;
 		}
-		return value;
+		return rs.wasNull()?null:value;
 	}
 	
 	private static final <T extends Entity> T fromResultSet(ResultSet rs, Class<T> entityClass) {
@@ -219,63 +219,86 @@ public class ResultMapper {
 		return null;
 	}
 	
+	public static Object fromResultSet(ResultSet rs, int types, int index) throws SQLException {
+		Object value = null;
+		/**
+		 * 没有根据数据库里的实际类型来取值,会导致某些类型的出现偏差,如表里为short类型,数据库为tinyint,但取出来的值为integer
+		 * 还有一些类型没有做转换
+		 */
+		switch (types) {
+		case Types.TINYINT:
+			value = rs.getByte(index);
+			break;
+		case Types.SMALLINT:
+			value = rs.getShort(index);
+			break;
+		case Types.INTEGER:
+			value = rs.getInt(index);
+			break;
+		case Types.DATE:
+			value = rs.getDate(index);
+			break;
+		case Types.TIME:
+			value = rs.getTime(index);
+			break;
+		case Types.TIMESTAMP:
+			value = rs.getTimestamp(index);
+			break;
+		default:
+			value = rs.getObject(index);
+		}
+		return value;
+	}
+	
 	public static Map<String, Object> asMap(ResultSet rs) {
 		try {
 			Map<String, Object> map = new HashMap<>();
-//		System.out.println("column length:"+l);
-//		System.out.println("  |catalogName|tableName|schemaName|columnClassName|columnLabel|scale|columnDisplaySize|precision|columnType|columnTypeName|columnName|columnValue|"
-//				+ "javaType|");
-//		java.sql.Types
+			boolean f = false;
+			if(f)
+				System.out.println("  |catalogName|tableName  |schemaName |columnClassName     |columnLabel  |scale|columnDisplaySize|precision|columnType |columnTypeName  |"
+						+ "javaType            |"
+						+"columnName |columnValue         |"
+						);
 			ResultSetMetaData md = rs.getMetaData();
 			int l = md.getColumnCount();
 			if(rs.next()) {
-				for(int i=0;i<l;i++){
-					String key = md.getColumnLabel(i+1);
-					Object value = null;
-					/**
-					 * 没有根据数据库里的实际类型来取值,会导致某些类型的出现偏差,如表里为short类型,数据库为tinyint,但取出来的值为integer
-					 * 还有一些类型没有做转换
-					 */
-					switch (md.getColumnType(i+1)) {
-					case Types.TINYINT:
-						value = rs.getByte(i+1);
-						break;
-					case Types.SMALLINT:
-						value = rs.getShort(i+1);
-						break;
-					case Types.DATE:
-						value = rs.getDate(i+1);
-						break;
-					case Types.TIME:
-						value = rs.getTime(i+1);
-						break;
-					case Types.TIMESTAMP:
-						value = rs.getDate(i+1);
-						break;
-					default:
-						value = rs.getObject(i+1);
+				for(int i=1;i<=l;i++){
+					String key = md.getColumnLabel(i);
+					Object value = fromResultSet(rs, md.getColumnType(i), i);
+					if(f) {
+						print((i)+"", 2);
+						print(md.getCatalogName(i), 11);
+						print(md.getTableName(i), 11);
+						print(md.getSchemaName(i), 11);
+						print(md.getColumnClassName(i), 20);
+						print(md.getColumnLabel(i), 13);
+						print(md.getScale(i)+"", 5);
+						print(md.getColumnDisplaySize(i)+"", 17);
+						print(md.getPrecision(i)+"", 9);
+						print(md.getColumnType(i)+"", 11);
+						print(rs.getObject(i).getClass().getName(), 20);
+						print(md.getColumnTypeName(i), 16);
+						print(md.getColumnName(i), 11);
+						print(rs.getObject(i)+"", 20);
+						System.out.println();
 					}
-//				System.out.println((i+1)+""
-//						+" | "+md.getCatalogName(i+1)
-//						+" | "+md.getTableName(i+1) 
-//						+" | "+md.getSchemaName(i+1) 
-//						+" | "+md.getColumnClassName(i+1)
-//						+" | "+md.getColumnLabel(i+1)
-//						+" | "+md.getScale(i+1)
-//						+" | "+md.getColumnDisplaySize(i+1)
-//						+" | "+md.getPrecision(i+1)
-//						+" | "+md.getColumnType(i+1)
-//						+" | "+md.getColumnTypeName(i+1) 
-//						+" | "+md.getColumnName(i+1)
-//						+" | "+rs.getObject(i+1)
-//						+" | "+rs.getObject(i+1).getClass().getName()
-//						+" |");
 					map.put(key, value);
 				}
 			}
 			return map;
 		} catch (Exception e) {
 			throw LOG.err("asMapFromResultSet", "数据库记录->Map对象出错");
+		}
+	}
+	public static void print(String str, int length) {
+		if(str.length()>length)
+			System.out.print(str.substring(0, length)+"|");
+		else {
+			StringBuilder b = new StringBuilder();
+			for(int i=0;i<length-str.length();i++) {
+				b.append(" ");
+			}
+			System.out.print(str+b.toString()+"|");
 		}
 	}
 	
@@ -286,28 +309,9 @@ public class ResultMapper {
 			int l = md.getColumnCount();
 			while(rs.next()) {
 				Map<String, Object> map = new HashMap<>();
-				for(int i=0;i<l;i++){
-					String key = md.getColumnLabel(i+1);
-					Object value = null;
-					switch (md.getColumnType(i+1)) {
-					case Types.TINYINT:
-						value = rs.getByte(i+1);
-						break;
-					case Types.SMALLINT:
-						value = rs.getShort(i+1);
-						break;
-					case Types.DATE:
-						value = rs.getDate(i+1);
-						break;
-					case Types.TIME:
-						value = rs.getTime(i+1);
-						break;
-					case Types.TIMESTAMP:
-						value = rs.getDate(i+1);
-						break;
-					default:
-						value = rs.getObject(i+1);
-					}
+				for(int i=1;i<=l;i++){
+					String key = md.getColumnLabel(i);
+					Object value = fromResultSet(rs, md.getColumnType(i), i);
 					map.put(key, value);
 				}
 				list.add(map);

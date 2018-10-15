@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 import com.irille.core.commons.SetBeans.SetBean.SetBeans;
 import com.irille.core.repository.orm.ColumnTypes;
 import com.irille.core.repository.orm.Entity;
-import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.sql.EntitySQL;
 import com.irille.core.repository.sql.I18NEntitySQL;
 
@@ -32,53 +31,52 @@ public class EntityQuery<T> extends AbstractQuery {
 		this.sql = new I18NEntitySQL(lang);
 	}
 	
-	public <R extends Entity> EntityQuery<R> SELECT(Class<R> entityClass) {
+	public <R extends Entity> EntityQuery<R> select(Class<R> entityClass) {
 		EntityQuery<R> entityQuery = (EntityQuery<R>)this;
 		entityQuery.entityClass = entityClass;
-		entityQuery.sql.SELECT(entityClass);
+		entityQuery.sql.select(entityClass);
 		return entityQuery;
 	}
 	
-	public EntityQuery<?> SELECT(IColumnField... flds) {
-		sql.SELECT(flds);
-		return this;
-	}
-	public EntityQuery<?> SELECT(IColumnField fld, String alias) {
-		sql.SELECT(fld, alias);
+	public EntityQuery<?> select(IPredicate... predicates) {
+		sql.select(predicates);
 		return this;
 	}
 	
-	public <R extends Entity> EntityQuery<R> UPDATE(Class<R> entityClass) {
+	public <R extends Entity> EntityQuery<R> update(Class<R> entityClass) {
 		EntityQuery<R> entityQuery = (EntityQuery<R>)this;
 		entityQuery.entityClass = entityClass;
-		entityQuery.sql = new EntitySQL().UPDATE(entityClass);
+		entityQuery.sql = new EntitySQL().update(entityClass);
 		return entityQuery;
 	}
 	
-	public <R extends Entity> EntityQuery<R> DELETE(Class<R> entityClass) {
+	public <R extends Entity> EntityQuery<R> delete(Class<R> entityClass) {
 		EntityQuery<R> entityQuery = (EntityQuery<R>)this;
 		entityQuery.entityClass = entityClass;
-		entityQuery.sql = new EntitySQL().DELETE_FROM(entityClass);
+		entityQuery.sql = new EntitySQL().deleteFrom(entityClass);
 		return entityQuery;
 	}
-	public <R extends Entity> EntityQuery<R> INSERT(Class<R> entityClass) {
+	public <R extends Entity> EntityQuery<R> insert(Class<R> entityClass) {
 		EntityQuery<R> entityQuery = (EntityQuery<R>)this;
 		entityQuery.entityClass = entityClass;
-		entityQuery.sql = new EntitySQL().INSERT_INTO(entityClass);
+		entityQuery.sql = new EntitySQL().insertInto(entityClass);
 		return entityQuery;
 	}
 	
 	public EntityQuery<T> lock() {
-		this.sql.LOCK(true);
+		this.sql.lock(true);
 		return this;
 	}
 	public EntityQuery<T> lock(boolean lock) {
-		this.sql.LOCK(lock);
+		this.sql.lock(lock);
 		return this;
 	}
 	public <R extends Entity> EntityQuery<R> FROM(Class<R> entityClass) {
+		return from(entityClass);
+	}
+	public <R extends Entity> EntityQuery<R> from(Class<R> entityClass) {
 		EntityQuery<R> entityQuery = (EntityQuery<R>)this;
-		entityQuery.sql.FROM(entityClass);
+		entityQuery.sql.from(entityClass);
 		entityQuery.entityClass = entityClass;
 		return entityQuery;
 	}
@@ -91,49 +89,74 @@ public class EntityQuery<T> extends AbstractQuery {
 		return this;
 	}
 	public EntityQuery<T> limit(int start, int limit) {
-		this.sql.LIMIT(start, limit);
+		this.sql.limit(start, limit);
 		return this;
 	}
-	public EntityQuery<T> SET(IColumnField fld, Serializable param) {
-		this.sql.SET(fld, param);
+	public EntityQuery<T> set(IPredicate predicate, Serializable param) {
+		this.sql.set(predicate, param);
 		return this;
 	}
-	public EntityQuery<T> VALUES(IColumnField field, Serializable param) {
-		sql.VALUES(field, param);
+	public EntityQuery<T> values(IPredicate predicate) {
+		sql.values(predicate);
 		return this;
 	}
-	public EntityQuery<T> WHERE(IColumnField fld, String conditions, Serializable... params) {
-		sql.WHERE(fld, conditions, params);
+	public EntityQuery<T> values(IPredicate... predicates) {
+		sql.values(predicates);
 		return this;
 	}
-	public EntityQuery<T> WHERE(boolean test, IColumnField fld, String conditions, Serializable... params) {
+	public EntityQuery<T> where(IPredicate predicate, String conditions, Serializable... params) {
+		sql.where(predicate, conditions, params);
+		return this;
+	}
+	public EntityQuery<T> where(IPredicate... predicates) {
+		sql.where(predicates);
+		return this;
+	}
+	public EntityQuery<T> where(boolean test, IPredicate predicate, String conditions, Serializable... params) {
 		if(test)
-			sql.WHERE(fld, conditions, params);
+			sql.where(predicate, conditions, params);
 		return this;
 	}
-	public EntityQuery<T> WHERE(boolean test, IColumnField fld, String conditions, Supplier<Serializable> params) {
+	public EntityQuery<T> where(boolean test, IPredicate predicate, String conditions, Supplier<Serializable> params) {
 		if(test)
-			sql.WHERE(fld, conditions, params.get());
+			sql.where(predicate, conditions, params.get());
 		return this;
 	}
-	public EntityQuery<T> WHERE(String conditions, Serializable... params) {
-		sql.WHERE(conditions, params);
+	public EntityQuery<T> where(boolean test, IPredicate... predicates) {
+		if(test)
+			sql.where(predicates);
 		return this;
 	}
-	public <T2 extends Entity> EntityQuery<T> LEFT_JOIN(Class<T2> entityClass, IColumnField fld1, IColumnField fld2) {
-		sql.LEFT_JOIN(entityClass, fld1, fld2);
+	public EntityQuery<T> where(String conditions, Serializable... params) {
+		sql.where(conditions, params);
 		return this;
 	}
-	public <T2 extends Entity> EntityQuery<T> INNER_JOIN(Class<T2> entityClass, IColumnField fld1, IColumnField fld2) {
-		sql.INNER_JOIN(entityClass, fld1, fld2);
+	public EntityQuery<T> or() {
+		sql.or();
 		return this;
 	}
-	public EntityQuery<T> GROUP_BY(IColumnField fld) {
-		sql.GROUP_BY(fld);
+	public <T2 extends Entity> EntityQuery<T> leftJoin(Class<T2> entityClass, IPredicate predicate1, IPredicate predicate2) {
+		sql.leftJoin(entityClass, predicate1, predicate2);
 		return this;
 	}
-	public EntityQuery<T> ORDER_BY(IColumnField fld, String type) {
-		sql.ORDER_BY(fld, type);
+	public <T2 extends Entity> EntityQuery<T> innerJoin(Class<T2> entityClass, IPredicate predicate1, IPredicate predicate2) {
+		sql.innerJoin(entityClass, predicate1, predicate2);
+		return this;
+	}
+	public EntityQuery<T> groupBy(IPredicate predicate) {
+		sql.groupBy(predicate);
+		return this;
+	}
+	public EntityQuery<T> groupBy(IPredicate... predicates) {
+		sql.groupBy(predicates);
+		return this;
+	}
+	public EntityQuery<T> orderBy(IPredicate predicate) {
+		sql.orderBy(predicate);
+		return this;
+	}
+	public EntityQuery<T> orderBy(IPredicate... predicates) {
+		sql.orderBy(predicates);
 		return this;
 	}
 	
@@ -171,7 +194,7 @@ public class EntityQuery<T> extends AbstractQuery {
 		} else {
 			items = super.queryObjects(resultClass);
 		}
-		return new Page<>(items, this.sql.getStart(), this.sql.getLimit(), queryCount());
+		return new Page<>(items, queryCount());
 	}
 	@SuppressWarnings("unchecked")
 	public T query() {
@@ -197,7 +220,7 @@ public class EntityQuery<T> extends AbstractQuery {
 		} else{
 			return null;
 		}
-		return new Page<>(items, this.sql.getStart(), this.sql.getLimit(), queryCount());
+		return new Page<>(items, queryCount());
 	}
 	public Map<String, Object> queryMap() {
 		return super.queryMap();
@@ -211,16 +234,19 @@ public class EntityQuery<T> extends AbstractQuery {
 	public boolean exists() {
 		return countRecord()>0;
 	}
-	public int executeUpdate() {
+	public int execute() {
 		return super.executeUpdate();
 	}
 	public Serializable executeUpdateReturnGeneratedKey(ColumnTypes type) {
 		return super.executeUpdateReturnGeneratedKey(type);
 	}
+	public Serializable executeFetchGeneratedKey(ColumnTypes type) {
+		return super.executeUpdateReturnGeneratedKey(type);
+	}
 	
 	@Override
 	protected Serializable[] getParams() {
-		return this.sql.PARAMS().toArray(new Serializable[this.sql.PARAMS().size()]);
+		return this.sql.params().toArray(new Serializable[this.sql.params().size()]);
 	}
 
 	@Override

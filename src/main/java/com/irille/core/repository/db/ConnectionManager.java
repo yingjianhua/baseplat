@@ -14,7 +14,12 @@ public class ConnectionManager {
 	
 	private static final ThreadLocal<Connection> current_thread_connection = new ThreadLocal<>();
 
-    static ComboPooledDataSource dataSource = new ComboPooledDataSource(AppConfig.db_config);
+    static ComboPooledDataSource dataSource;
+    
+    static {
+    	System.out.println(AppConfig.db_config+"");
+    	dataSource = new ComboPooledDataSource(AppConfig.db_config);
+    }
 
 	public static void main(String[] args) {
 		

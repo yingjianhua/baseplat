@@ -58,26 +58,27 @@ public class Env implements IPubVars {
 		_programDir = _workDir;
 		_cssSpriteDir = _workDir + "cssSprite" + FILE_SEPARATOR;
 		_tmpDir = _workDir + "tmp" + FILE_SEPARATOR;
-		String db = getDbConf();
-		if (db.equals("DB2"))
-			_db = new DbDb2(); // 当前数据库指定
-		else if (db.equals("ORACLE"))
-			_db = new DbOracle();
-		else
-			_db = new DbMysql();
-		setConfDefault(SysConf.values());
+		_db = new DbMysql();
+//		String db = getDbConf();
+//		if (db.equals("DB2"))
+//			_db = new DbDb2(); // 当前数据库指定
+//		else if (db.equals("ORACLE"))
+//			_db = new DbOracle();
+//		else
+//			_db = new DbMysql();
+//		setConfDefault(SysConf.values());
 	}
 
-	private String getDbConf() {
-		Properties pps = new Properties();
-		try {
-			InputStream in = getClass().getResourceAsStream("/db.properties");
-			pps.load(in);
-		} catch (IOException e) {
-			throw LOG.err("loadDbConf", "加载数据库配置信息失败");
-		}
-		return pps.getProperty("db").toUpperCase();
-	}
+//	private String getDbConf() {
+//		Properties pps = new Properties();
+//		try {
+//			InputStream in = getClass().getResourceAsStream("/db.properties");
+//			pps.load(in);
+//		} catch (IOException e) {
+//			throw LOG.err("loadDbConf", "加载数据库配置信息失败");
+//		}
+//		return pps.getProperty("db").toUpperCase();
+//	}
 
 	public static TranMsg getTran() {
 		TranMsg tranmsg = _tranMsgs.get();

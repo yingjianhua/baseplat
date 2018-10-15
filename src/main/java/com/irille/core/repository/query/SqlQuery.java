@@ -85,6 +85,9 @@ public class SqlQuery extends AbstractQuery{
 	public int executeUpdate() {
 		return super.executeUpdate();
 	}
+	public int execute() {
+		return super.executeUpdate();
+	}
 	
 	@Override
 	protected Serializable[] getParams() {

@@ -79,9 +79,10 @@ public abstract class AbstractQuery {
 		int s = sql.indexOf(" LIMIT");
 		if(s!=-1)
 			sql = sql.substring(0, s);
-		sql = sql.replaceFirst("(select|SELECT)\\s+.*\\s+(FROM|from)", "SELECT COUNT(1) FROM");
+		sql = sql.replaceFirst("(select|SELECT)\\s+.*?\\s+(FROM|from)", "SELECT COUNT(1) FROM");
 		return query(rs->ResultMapper.asObject(rs, Integer.class), needDebug(), sql, getParams());
 	}
+	
 	/**
 	 * 统计记录数
 	 * 
@@ -136,7 +137,7 @@ public abstract class AbstractQuery {
 		PreparedStatement stmt = null;
 		try {
 			stmt = ConnectionManager.getConnection().prepareStatement(getSql());
-			BeanBase.toPreparedStatementData(stmt, 1, getParams());
+			toPreparedStatementData(stmt, 1, getParams());
 			return stmt.executeUpdate();
 		} catch (Exception e) {
 			logger.error("执行executeUpdate出错:{}", e.getMessage());
@@ -154,7 +155,7 @@ public abstract class AbstractQuery {
 		PreparedStatement stmt = null;
 		try {
 			stmt = ConnectionManager.getConnection().prepareStatement(getSql(), Statement.RETURN_GENERATED_KEYS);
-			BeanBase.toPreparedStatementData(stmt, 1, getParams());
+			toPreparedStatementData(stmt, 1, getParams());
 			stmt.executeUpdate();
 			ResultSet rs = stmt.getGeneratedKeys();
 			return (Serializable)ResultMapper.asColumn(rs, type, "GENERATED_KEY");
@@ -173,8 +174,7 @@ public abstract class AbstractQuery {
 		try {
 			stmt = ConnectionManager.getConnection().prepareStatement(sql);
 			stmt.setFetchSize(AppConfig.query_fetchsize);
-			stmt.setFetchSize(BeanBase.FETCH_SIZE);
-			BeanBase.toPreparedStatementData(stmt, 1, params);
+			toPreparedStatementData(stmt, 1, params);
 			rs = stmt.executeQuery();
 			return f.apply(rs);
 		} catch (Exception e) {
@@ -186,20 +186,39 @@ public abstract class AbstractQuery {
 	
 	protected <R> R query(Function<ResultSet, R> f) {
 		printSql(getSql(), getParams());
-//		log.debug("sql:"+getSql()+"|"+params(getParams()));
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
 			stmt = ConnectionManager.getConnection().prepareStatement(getSql());
 			stmt.setFetchSize(AppConfig.query_fetchsize);
-			stmt.setFetchSize(BeanBase.FETCH_SIZE);
-			BeanBase.toPreparedStatementData(stmt, 1, getParams());
+			toPreparedStatementData(stmt, 1, getParams());
 			rs = stmt.executeQuery();
 			return f.apply(rs);
 		} catch (Exception e) {
 			throw LOG.err(e, "queryRecord", "取数据库记录时出错【{0}】!", getSql());
 		} finally {
 			close(stmt, rs);
+		}
+	}
+	/**
+	 * 将对象的值置到PreparedStatement对象中
+	 * 
+	 * @param stmt
+	 * @param firstFldId
+	 * @param vals
+	 *          参数值列表
+	 * @return
+	 */
+	public final static int toPreparedStatementData(PreparedStatement stmt, int firstFldId, Serializable... vals) {
+		try {
+			int j = firstFldId;
+			for (int i = 0; i < vals.length; i++) {
+				stmt.setObject(j, vals[i]);
+				j++;
+			}
+			return j;
+		} catch (Exception e) {
+			throw LOG.err(e, "toPreparedStatement", "对对象【PreparedStatement】赋值时出错!");
 		}
 	}
 
@@ -230,10 +249,9 @@ public abstract class AbstractQuery {
 		} else {
 			Optional<StackTraceElement> o2 = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Action")||st.getClassName().contains("Action$")).findFirst();
 			if(o2.isPresent())
-				logger.warn("数据库查询没有写在Dao里面,有问题... "+o2.get().toString());
+				logger.debug("sql:"+sql+"|"+params(params)+"] [stackTrace: "+o.get().toString());
 			else
-				logger.warn("数据库查询没有写在Dao里面,有问题... 未知位置!!!");
-			logger.debug("sql:"+sql+"|"+params(params));
+				logger.debug("sql:"+sql+"|"+params(params));
 		}
 	}
 	
