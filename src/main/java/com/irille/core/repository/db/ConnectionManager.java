@@ -17,7 +17,6 @@ public class ConnectionManager {
     static ComboPooledDataSource dataSource;
     
     static {
-    	System.out.println(AppConfig.db_config+"");
     	dataSource = new ComboPooledDataSource(AppConfig.db_config);
     }
 

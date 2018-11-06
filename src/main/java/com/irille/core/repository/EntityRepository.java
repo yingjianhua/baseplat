@@ -9,9 +9,12 @@ import com.irille.core.repository.orm.IColumnField;
 import com.irille.core.repository.orm.Table;
 import com.irille.core.repository.query.EntityQuery;
 
+import irille.pub.Log;
 import irille.pub.util.GenericsUtils;
 
 public class EntityRepository<T extends Entity> extends Query2 {
+	
+	private static final Log LOG = new Log(EntityRepository.class);
 	
 	private Class<T> beanClass;
 

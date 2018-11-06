@@ -106,7 +106,7 @@ public class ResultMapper {
 			value = rs.getString(columnLabel);
 			break;
 		case TIME:
-			value = rs.getDate(columnLabel);
+			value = rs.getTimestamp(columnLabel);
 			break;
 		default:
 			value = rs.getObject(columnLabel);

@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.stream.Stream;
 
-import org.apache.log4j.Logger;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -44,7 +43,6 @@ import oracle.sql.TIMESTAMP;
  */
 public abstract class Bean<BEAN extends Bean, KEY extends Serializable> extends BeanBase<BEAN, KEY> implements ISvrVars {
 	private static final Log LOG = new Log(Bean.class);
-	private static final Logger log = Logger.getLogger(Bean.class);
 
 	public static final String MAIN_PKEY = "mainPkey";
 

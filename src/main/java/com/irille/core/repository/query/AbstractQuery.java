@@ -249,7 +249,7 @@ public abstract class AbstractQuery {
 		} else {
 			Optional<StackTraceElement> o2 = Stream.of(new Throwable().getStackTrace()).limit(10).filter(st->st.getClassName().endsWith("Action")||st.getClassName().contains("Action$")).findFirst();
 			if(o2.isPresent())
-				logger.debug("sql:"+sql+"|"+params(params)+"] [stackTrace: "+o.get().toString());
+				logger.debug("sql:"+sql+"|"+params(params)+"] [stackTrace: "+o2.get().toString());
 			else
 				logger.debug("sql:"+sql+"|"+params(params));
 		}

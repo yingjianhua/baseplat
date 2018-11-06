@@ -1,6 +1,9 @@
 package com.irille.core.repository.orm;
 import java.math.BigDecimal;
 
+import irille.pub.tb.EnumLine;
+import irille.pub.tb.IEnumOpt;
+
 public enum ColumnTemplate implements IColumnTemplate {
 
 	STR(ColumnFactory.type(ColumnTypes.STR)),
@@ -15,6 +18,11 @@ public enum ColumnTemplate implements IColumnTemplate {
 	STR__100_NULL(STR_NULL.length(100)),
 	STR__200(STR.length(200)),
 	STR__200_NULL(STR_NULL.length(200)),
+	STR__500(STR.length(500)),
+	STR__500_NULL(STR_NULL.length(500)),
+	STR__1000(STR.length(1000)),
+	STR__1000_NULL(STR_NULL.length(1000)),
+	STR__2000(STR.length(2000)),
 	STR__2000_NULL(STR_NULL.length(2000)),
 	TEXT(ColumnFactory.type(ColumnTypes.TEXT)),
 	TEXT_NULL(TEXT.nullable(true)),
@@ -39,9 +47,11 @@ public enum ColumnTemplate implements IColumnTemplate {
 	TIME(ColumnFactory.type(ColumnTypes.TIME)),
 	
 	SHORT(ColumnFactory.type(ColumnTypes.SHORT).length(6)),
+	SHORT_NULL(ColumnFactory.type(ColumnTypes.SHORT).nullable(true).length(6)),
 	ROW_VERSION(SHORT.showName("行版本")),
 	
 	OPTION(ColumnFactory.type(ColumnTypes.OPTLINE).length(4)),
+	SEX(ColumnFactory.opt(OSex.UNKNOW).showName("性别")),
 	
 	BOOLEAN(ColumnFactory.type(ColumnTypes.BOOLEAN)),
 	BOOLEAN_TRUE(ColumnTemplate.BOOLEAN.defaultValue("1")),
@@ -61,4 +71,11 @@ public enum ColumnTemplate implements IColumnTemplate {
 		return builder;
 	}
 	
+	public enum OSex implements IEnumOpt {
+		UNKNOW(0,"未知"), MALE(1,"男"), FEMALE(2,"女");
+		public static String NAME="性别";
+		private EnumLine _line;
+		private OSex(int key, String name) {_line=new EnumLine(this,key,name);	}
+		public EnumLine getLine(){return _line;	}
+	}
 }

@@ -1,10 +1,11 @@
 package irille.pub;
 
-import irille.pub.PubInfs.IMsg;
-
 import java.text.MessageFormat;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import irille.pub.PubInfs.IMsg;
 
 /**
  * 日志程序，内部结合 Log4j，根据Log4j的配置对信息进行分等级输出
@@ -31,7 +32,7 @@ public class Log {
 	private Logger _log;
 
 	public Log(Class clazz) {
-		_log = Logger.getLogger(clazz);
+		_log = LoggerFactory.getLogger(clazz);
 	}
 
 	/**

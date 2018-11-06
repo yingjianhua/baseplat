@@ -44,6 +44,10 @@ public class Query2 {
 		EntityQuery<?> q = new EntityQuery<>();
 		return q.select(predicates);
 	}
+	public static <T extends Entity> EntityQuery<?> select(Class<T> entityClass) {
+		EntityQuery<?> q = new EntityQuery<>();
+		return q.select(entityClass);
+	}
 	public static <T extends Entity> EntityQuery<T> selectFrom(Class<T> entityClass) {
 		EntityQuery<?> q = new EntityQuery<>();
 		return q.select(entityClass).FROM(entityClass);

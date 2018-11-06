@@ -18,6 +18,13 @@ public class JsonWriter {
 
 	private final ObjectMapper objectMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL).setLocale(null);
 
+	public ObjectMapper getObjectMapper() {
+		return objectMapper;
+	}
+	public ObjectMapper getPrettyObjectMapper() {
+		return pretty;
+	}
+	
 	public void setLocale(Locale locale) {
 		this.objectMapper.setLocale(locale);
 	}

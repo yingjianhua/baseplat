@@ -1,9 +1,5 @@
 package irille.pub.html;
 
-import irille.pub.IPubVars;
-import irille.pub.Log;
-import irille.pub.svr.Env;
-
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -12,7 +8,12 @@ import java.util.Vector;
 
 import javax.imageio.ImageIO;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import irille.pub.IPubVars;
+import irille.pub.Log;
+import irille.pub.svr.Env;
 
 /**
  * 图片合并类：通过合并产生一个大图片文件，并缓冲到“Base.CSS_SPRITE_BUF”中，主要被类"Style"中的方法“
@@ -27,7 +28,7 @@ public class ImgMerge  implements IPubVars{
 	private static final Log LOG= new Log(ImgMerge.class);
 	private String _outFile;
 	private Hashtable<String, PostSize> _postSizes;
-	static Logger _logger = Logger.getLogger(ImgMerge.class.getName());
+	static Logger _logger = LoggerFactory.getLogger(ImgMerge.class.getName());
 	private final static Hashtable<String, Object> _cssSpriteBuf = new Hashtable(); 
 
 	public static void main(String[] args) {

@@ -9,7 +9,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.irille.core.commons.annotation.Scanner;
 import com.irille.core.repository.db.ConnectionManager;
@@ -20,7 +21,7 @@ public class StartupServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger log = Logger.getLogger(StartupServlet.class);
+	private static final Logger log = LoggerFactory.getLogger(StartupServlet.class);
 
 	private static final Map<String, Object> config_cache = new ConcurrentHashMap<>();
 

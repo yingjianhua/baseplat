@@ -12,7 +12,11 @@ import com.irille.core.repository.Query2;
 import com.irille.core.repository.db.ConnectionManager;
 import com.irille.core.repository.query.EntityQuery;
 
+import irille.pub.Log;
+
 public abstract class Entity extends Query2 {
+	
+	private static final Log LOG = new Log(Entity.class);
 
 	private static final Logger logger = LoggerFactory.getLogger(Entity.class);
 

@@ -31,11 +31,9 @@ public class EntityQuery<T> extends AbstractQuery {
 		this.sql = new I18NEntitySQL(lang);
 	}
 	
-	public <R extends Entity> EntityQuery<R> select(Class<R> entityClass) {
-		EntityQuery<R> entityQuery = (EntityQuery<R>)this;
-		entityQuery.entityClass = entityClass;
-		entityQuery.sql.select(entityClass);
-		return entityQuery;
+	public <R extends Entity> EntityQuery<?> select(Class<R> entityClass) {
+		this.sql.select(entityClass);
+		return this;
 	}
 	
 	public EntityQuery<?> select(IPredicate... predicates) {
